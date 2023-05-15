@@ -1,0 +1,7 @@
+langchain
+gradio
+openai
+python-dotenv
+pytest
+pytest-cov
+shroomdk

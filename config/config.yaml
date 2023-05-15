@@ -1,0 +1,59 @@
+# config.yaml
+database:
+  default_database: ethereum
+  default_schema: core
+
+model:
+  llm_name: gpt-3.5-turbo
+
+tool:
+  query_database_tool_top_k: 10
+  check_table_summary_tool_mode: local
+  check_table_metadata_tool_mode: local
+  query_database_tool_mode: shroomdk
+
+agent_chain:
+  agent_executor_return_intermedidate_steps: false
+
+metadata:
+  context_ethereum_core_file: data/metadata/context_ethereum_core.json
+  annotation_ethereum_core_file: data/metadata/annotation_ethereum_core_v1.json
+
+ethereum_core_table_long_name:
+  enabled_list:
+    - "ethereum.core.ez_dex_swaps"
+    - "ethereum.core.ez_current_balances"
+    - "ethereum.core.ez_token_transfers"
+    - "ethereum.core.dim_labels"
+  full_list:
+    - "ethereum.core.dim_contract_abis"
+    - "ethereum.core.dim_contracts"
+    - "ethereum.core.dim_contracts_extended"
+    - "ethereum.core.dim_dates"
+    - "ethereum.core.dim_dex_liquidity_pools"
+    - "ethereum.core.dim_event_signatures"
+    - "ethereum.core.dim_function_signatures"
+    - "ethereum.core.dim_labels"
+    - "ethereum.core.dim_nft_metadata"
+    - "ethereum.core.ez_balance_deltas"
+    - "ethereum.core.ez_current_balances"
+    - "ethereum.core.ez_decoded_event_logs"
+    - "ethereum.core.ez_dex_swaps"
+    - "ethereum.core.ez_eth_transfers"
+    - "ethereum.core.ez_nft_mints"
+    - "ethereum.core.ez_nft_sales"
+    - "ethereum.core.ez_nft_transfers"
+    - "ethereum.core.ez_snapshot"
+    - "ethereum.core.ez_token_transfers"
+    - "ethereum.core.fact_blocks"
+    - "ethereum.core.fact_contract_reads"
+    - "ethereum.core.fact_decoded_event_logs"
+    - "ethereum.core.fact_dex_pool_daily_reads"
+    - "ethereum.core.fact_dex_pool_weekly_reads"
+    - "ethereum.core.fact_eth_balances"
+    - "ethereum.core.fact_hourly_token_prices"
+    - "ethereum.core.fact_token_balances"
+    - "ethereum.core.fact_token_transfers"
+    - "ethereum.core.fact_traces"
+    - "ethereum.core.fact_transactions"
+
