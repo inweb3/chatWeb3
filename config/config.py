@@ -26,7 +26,6 @@ class Config:
             "user": os.getenv("SNOWFLAKE_USER"),
             "password": os.getenv("SNOWFLAKE_PASSWORD"),
             "account_identifier": os.getenv("SNOWFLAKE_ACCOUNT_IDENTIFIER"),
-            "shroomdk_api_key": os.getenv("SHROOMDK_API_KEY"),
         }
         self.config["shroomdk_params"] = {
             "shroomdk_api_key": os.getenv("SHROOMDK_API_KEY"),
