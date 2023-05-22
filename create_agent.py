@@ -59,8 +59,8 @@ def create_agent_executor():
         **agent_config.get("snowflake_params")
         if agent_config.get("snowflake_params")
         else {},
-        **agent_config.get("shrromdk_params")
-        if agent_config.get("shrromdk_params")
+        **agent_config.get("shroomdk_params")
+        if agent_config.get("shroomdk_params")
         else {},
         local_index_file_path=LOCAL_INDEX_FILE_PATH,
         index_annotation_file_path=INDEX_ANNOTATION_FILE_PATH,
