@@ -1,33 +1,29 @@
+import json
 import logging
 import re
 from typing import Any, Dict, List, Optional, Union, cast
 
 from langchain.base_language import BaseLanguageModel
-from langchain.callbacks.manager import (
-    AsyncCallbackManagerForToolRun,
-    CallbackManagerForToolRun,
-)
+from langchain.callbacks.manager import (AsyncCallbackManagerForToolRun,
+                                         CallbackManagerForToolRun)
 from langchain.chains.llm import LLMChain
 from langchain.chat_models.base import BaseChatModel
-from langchain.prompts.chat import (
-    BaseMessagePromptTemplate,
-    ChatPromptTemplate,
-    HumanMessagePromptTemplate,
-    SystemMessagePromptTemplate,
-)
+from langchain.prompts.chat import (BaseMessagePromptTemplate,
+                                    ChatPromptTemplate,
+                                    HumanMessagePromptTemplate,
+                                    SystemMessagePromptTemplate)
 from langchain.schema import BaseMessage
-from langchain.tools.sql_database.tool import (
-    InfoSQLDatabaseTool,
-    ListSQLDatabaseTool,
-    QueryCheckerTool,
-    QuerySQLDataBaseTool,
-)
+from langchain.tools.sql_database.tool import (InfoSQLDatabaseTool,
+                                               ListSQLDatabaseTool,
+                                               QueryCheckerTool,
+                                               QuerySQLDataBaseTool)
 from pydantic import Field, root_validator
 
 from chatweb3.snowflake_database import SnowflakeContainer
 from chatweb3.tools.base import BaseToolInput
 from chatweb3.tools.snowflake_database.prompt import SNOWFLAKE_QUERY_CHECKER
-from chatweb3.utils import parse_table_long_name_to_json_list  # parse_str_to_dict
+from chatweb3.utils import \
+    parse_table_long_name_to_json_list  # parse_str_to_dict
 from config.config import agent_config
 from config.logging_config import get_logger
 
@@ -299,12 +295,27 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
                     "query": match.group(3),
                 }
             else:
-                # try to see if the input is a query only
-                input_dict = {
-                    "database": DEFAULT_DATABASE,
-                    "schema": DEFAULT_SCHEMA,
-                    "query": tool_input,
-                }
+                # # try to see if the input is a query only
+                # input_dict = {
+                #     "database": DEFAULT_DATABASE,
+                #     "schema": DEFAULT_SCHEMA,
+                #     "query": tool_input,
+                # }
+                # try to see if the input is a string of a dict
+                try:
+                    input_dict = json.loads(tool_input)
+                    if "query" in input_dict.keys():
+                        if "database" not in input_dict.keys():
+                            input_dict["database"] = DEFAULT_DATABASE
+                        if "schema" not in input_dict.keys():
+                            input_dict["schema"] = DEFAULT_SCHEMA
+                except json.JSONDecodeError:
+                    # try to see if the input is a query only
+                    input_dict = {
+                        "database": DEFAULT_DATABASE,
+                        "schema": DEFAULT_SCHEMA,
+                        "query": tool_input,
+                    }
         elif isinstance(tool_input, dict):
             full_keys = {"database", "schema", "query"}
             if full_keys.issubset(tool_input.keys()):

@@ -22,6 +22,8 @@ logger = get_logger(
 
 load_dotenv()
 
+CONVERSATION_MODE = False
+
 
 def set_openai_api_key(api_key, agent):
     """
@@ -37,7 +39,7 @@ def set_openai_api_key(api_key, agent):
     if api_key:
         # set the OpenAI API Key
         os.environ["OPENAI_API_KEY"] = api_key
-        agent_executor = create_agent_executor()
+        agent_executor = create_agent_executor(conversation_mode=CONVERSATION_MODE)
         os.environ["OPENAI_API_KEY"] = ""
         return agent_executor
 

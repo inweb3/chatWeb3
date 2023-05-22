@@ -12,8 +12,8 @@ tool:
   check_table_metadata_tool_mode: local
   query_database_tool_mode: shroomdk
 
-agent_chain:
-  agent_executor_return_intermedidate_steps: false
+# agent_chain:
+#  agent_executor_return_intermedidate_steps: false
 
 metadata:
   context_ethereum_core_file: data/metadata/context_ethereum_core.json
