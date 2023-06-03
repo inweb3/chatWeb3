@@ -6,7 +6,7 @@ More details about this application prototype is available at:
 
 ## Package dependency
 
-Dependencies are managed with poetry through the `pyproject.toml` file.
+Use `poetry install` to install dependencies.
 
 ## Required API keys
 
