@@ -202,8 +202,17 @@ class SnowflakeContainer:
             annotation_file_path=index_annotation_file_path,
             verbose=verbose,
         )
-        if shroomdk_api_key is not None:
-            self.shroomdk = ShroomDK(shroomdk_api_key)
+        self._shroomdk = (
+            ShroomDK(shroomdk_api_key) if shroomdk_api_key is not None else None
+        )
+
+    @property
+    def shroomdk(self):
+        if self._shroomdk is None:
+            raise AttributeError(
+                "Shroomdk attribute is not found in the SnowflakeContainer; please double check whether your SHROOMDK_API_KEY is set correctly in the .env file"
+            )
+        return self._shroomdk
 
     def _create_engine(self, database: str) -> Engine:
         """Create a Snowflake engine with the given database

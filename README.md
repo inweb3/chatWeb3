@@ -4,13 +4,9 @@ More details about this application prototype is available at:
 
 **[Can ChatGPT unlock blockchain data for the masses? Early insights from building ChatWeb3](https://www.inweb3.com/chatcrypto-chatgpt-for-blockchain-data/)**
 
-## Install the requirements
+## Package dependency
 
-Using pip:
-
-```
-pip install -r requirements.txt
-```
+Dependencies are managed with poetry through the `pyproject.toml` file.
 
 ## Required API keys
 
