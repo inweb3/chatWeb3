@@ -4,26 +4,31 @@ import re
 from typing import Any, Dict, List, Optional, Union, cast
 
 from langchain.base_language import BaseLanguageModel
-from langchain.callbacks.manager import (AsyncCallbackManagerForToolRun,
-                                         CallbackManagerForToolRun)
+from langchain.callbacks.manager import (
+    AsyncCallbackManagerForToolRun,
+    CallbackManagerForToolRun,
+)
 from langchain.chains.llm import LLMChain
 from langchain.chat_models.base import BaseChatModel
-from langchain.prompts.chat import (BaseMessagePromptTemplate,
-                                    ChatPromptTemplate,
-                                    HumanMessagePromptTemplate,
-                                    SystemMessagePromptTemplate)
+from langchain.prompts.chat import (
+    BaseMessagePromptTemplate,
+    ChatPromptTemplate,
+    HumanMessagePromptTemplate,
+    SystemMessagePromptTemplate,
+)
 from langchain.schema import BaseMessage
-from langchain.tools.sql_database.tool import (InfoSQLDatabaseTool,
-                                               ListSQLDatabaseTool,
-                                               QueryCheckerTool,
-                                               QuerySQLDataBaseTool)
+from langchain.tools.sql_database.tool import (
+    InfoSQLDatabaseTool,
+    ListSQLDatabaseTool,
+    QuerySQLCheckerTool,
+    QuerySQLDataBaseTool,
+)
 from pydantic import Field, root_validator
 
 from chatweb3.snowflake_database import SnowflakeContainer
 from chatweb3.tools.base import BaseToolInput
 from chatweb3.tools.snowflake_database.prompt import SNOWFLAKE_QUERY_CHECKER
-from chatweb3.utils import \
-    parse_table_long_name_to_json_list  # parse_str_to_dict
+from chatweb3.utils import parse_table_long_name_to_json_list  # parse_str_to_dict
 from config.config import agent_config
 from config.logging_config import get_logger
 
@@ -402,7 +407,7 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
         return ""  # dummy return, just to make mypy happy
 
 
-class SnowflakeQueryCheckerTool(QueryCheckerTool):
+class SnowflakeQueryCheckerTool(QuerySQLCheckerTool):
     """Use an LLM to check if a query is correct.
     Adapted from https://www.patterns.app/blog/2023/01/18/crunchbot-sql-analyst-gpt/"""
 
@@ -445,7 +450,7 @@ class SnowflakeQueryCheckerTool(QueryCheckerTool):
 
         if values["llm_chain"].prompt.input_variables != ["query", "dialect"]:
             raise ValueError(
-                "LLM chain for QueryCheckerTool must have input variables ['query', 'dialect']"
+                "LLM chain for QuerySQLCheckerTool must have input variables ['query', 'dialect']"
             )
 
         return values
