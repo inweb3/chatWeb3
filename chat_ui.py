@@ -22,7 +22,8 @@ logger = get_logger(
 
 load_dotenv()
 
-CONVERSATION_MODE = False
+# CONVERSATION_MODE = False
+CONVERSATION_MODE = True
 
 
 def set_openai_api_key(api_key, agent):

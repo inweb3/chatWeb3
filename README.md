@@ -50,3 +50,5 @@ logger = get_logger(
     __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
 )
 ```
+
+The log file is located under the `chatweb3/logs` directory.

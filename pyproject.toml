@@ -9,28 +9,33 @@ repository = "https://github.com/inWeb3ai/chatWeb3"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-gradio = "3.18.0"
-langchain = "0.0.176"
-openai = "0.27.2"
-python-dotenv = "0.21.1"
+gradio = ">=3.18.0"
+langchain = ">=0.0.176"
+openai = ">=0.27.2"
+python-dotenv = ">=0.21.1"
 shroomdk = "2.0.7"
-sqlalchemy = "1.4.48"
+sqlalchemy = ">=1.4.48"
+loguru = "^0.7.0"
 
 [tool.poetry.group.test.dependencies]
-pytest = "7.3.1"
-pytest-cov = "4.0.0"
-pytest-mock = "3.10.0"
-pytest-socket = "^0.6.0"
+pytest = ">=7.3.1"
+pytest-cov = ">=4.0.0"
+pytest-mock = ">=3.10.0"
+pytest-socket = ">=0.6.0"
 
 [tool.poetry.group.lint.dependencies]
-ruff = "^0.0.249"
-types-toml = "^0.10.8.1"
-black = "^23.1.0"
+ruff = ">=0.0.249"
+types-toml = ">=0.10.8.1"
+black = ">=23.1.0"
 
 [tool.poetry.group.typing.dependencies]
-mypy = "^0.991"
-types-pyyaml = "^6.0.12.2"
-types-requests = "^2.28.11.5"
+mypy = ">=0.991"
+types-pyyaml = ">=6.0.12.2"
+types-requests = ">=2.28.11.5"
+
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.25.1"
 
 [build-system]
 requires = ["poetry-core"]

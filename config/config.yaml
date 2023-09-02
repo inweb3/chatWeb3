@@ -5,6 +5,7 @@ database:
 
 model:
   llm_name: gpt-3.5-turbo
+  # llm_name: gpt-4
 
 tool:
   query_database_tool_top_k: 10

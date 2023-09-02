@@ -164,3 +164,6 @@ logs/
 
 # VSCode
 .vscode/
+
+# Local development
+.aDev/

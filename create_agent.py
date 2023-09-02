@@ -11,21 +11,36 @@ from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationBufferMemory
 
 from chatweb3.agents.agent_toolkits.snowflake.base import (
-    create_snowflake_chat_agent, create_snowflake_conversational_chat_agent)
+    create_snowflake_chat_agent,
+    create_snowflake_conversational_chat_agent,
+)
 from chatweb3.agents.agent_toolkits.snowflake.prompt import (
-    CUSTOM_CONV_SNOWFLAKE_PREFIX, CUSTOM_CONV_SNOWFLAKE_SUFFIX,
-    CUSTOM_FORMAT_INSTRUCTIONS, CUSTOM_SNOWFLAKE_PREFIX,
-    CUSTOM_SNOWFLAKE_SUFFIX)
-from chatweb3.agents.agent_toolkits.snowflake.toolkit_custom import \
-    CustomSnowflakeDatabaseToolkit
+    CUSTOM_CONV_SNOWFLAKE_PREFIX,
+    CUSTOM_CONV_SNOWFLAKE_SUFFIX,
+    CUSTOM_FORMAT_INSTRUCTIONS,
+    CUSTOM_SNOWFLAKE_PREFIX,
+    CUSTOM_SNOWFLAKE_SUFFIX,
+)
+from chatweb3.agents.agent_toolkits.snowflake.toolkit_custom import (
+    CustomSnowflakeDatabaseToolkit,
+)
 from chatweb3.callbacks.logger_callback import LoggerCallbackHandler
 from chatweb3.snowflake_database import SnowflakeContainer
 from config.config import agent_config
-from config.logging_config import get_logger
 
-logger = get_logger(
-    __name__, log_level=logging.INFO, log_to_console=True, log_to_file=True
-)
+# from config.logging_config import get_logger
+from loguru import logger
+from langchain.callbacks import FileCallbackHandler
+
+# logger = get_logger(
+#     __name__, log_level=logging.INFO, log_to_console=True, log_to_file=True
+# )
+
+logfile = os.path.join(os.path.dirname(__file__), "logs", "agent.log")
+logger.add(logfile, colorize=True, enqueue=True)
+# file_callback_handler = FileCallbackHandler(logfile)
+log_callback_handler = LoggerCallbackHandler()
+
 
 PROJ_ROOT_DIR = agent_config.get("proj_root_dir")
 LOCAL_INDEX_FILE_PATH = os.path.join(
@@ -47,7 +62,8 @@ def create_agent_executor(conversation_mode=False):
     Returns:
     agent_executor: The created agent executor
     """
-    callbacks = CallbackManager([LoggerCallbackHandler()])
+    #    callbacks = CallbackManager([LoggerCallbackHandler()])
+    callbacks = [log_callback_handler]
 
     llm = ChatOpenAI(
         model_name=agent_config.get("model.llm_name"),
