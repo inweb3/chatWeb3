@@ -10,12 +10,13 @@ repository = "https://github.com/inWeb3ai/chatWeb3"
 [tool.poetry.dependencies]
 python = "^3.11"
 gradio = ">=3.18.0"
-langchain = ">=0.0.176"
+langchain = ">=0.0.279"
 openai = ">=0.27.2"
 python-dotenv = ">=0.21.1"
-shroomdk = "2.0.7"
+shroomdk = ">=2.0.7"
 sqlalchemy = ">=1.4.48"
 loguru = "^0.7.0"
+flipside = "^2.0.8"
 
 [tool.poetry.group.test.dependencies]
 pytest = ">=7.3.1"

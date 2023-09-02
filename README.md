@@ -12,10 +12,10 @@ Use `poetry install` to install dependencies.
 
 ### Flipsidecrypto database
 
-Create a `.env` file and add a ShroomDK API key, which allows the application to query the Flipsidecrypto database. ShroomDK API key can be obtained [here](https://sdk.flipsidecrypto.xyz/shroomdk).
+Create a `.env` file and add a Flipside API key, which allows the application to query the Flipsidecrypto database. Flipside API key can be obtained [here](https://flipsidecrypto.xyz/account/api-keys), and it has a free tier as well.
 
 ```
-SHROOMDK_API_KEY="XXX"
+FLIPSIDE_API_KEY="XXX"
 ```
 
 ### OpenAI chatGPT

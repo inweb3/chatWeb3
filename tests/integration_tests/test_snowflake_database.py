@@ -17,9 +17,10 @@ logging.getLogger("sqlalchemy.engine").setLevel(logging.ERROR)
 logging.getLogger("snowflake.connector").setLevel(logging.ERROR)
 
 
-def test_snowflake_container_initialization_shroomdk(snowflake_params):
+def test_snowflake_container_initialization_flipside(snowflake_params):
     container = SnowflakeContainer(**snowflake_params)
-    assert container.shroomdk is not None
+    # assert container.shroomdk is not None
+    assert container.flipside is not None
     assert container.metadata_parser is not None
 
 
@@ -64,6 +65,47 @@ def test_get_snowflake_database_table_metadata_tool_run_local_single_schema(
         tool._run("invalid_input")
 
 
+def test_query_snowflake_database_tool_dict_flipside(snowflake_container):
+    tool = QuerySnowflakeDatabaseTool(db=snowflake_container)
+
+    tool_input = {
+        "database": "ethereum",
+        "schema": "beacon_chain",
+        "query": "select * from ethereum.beacon_chain.fact_attestations limit 3",
+    }
+    print(f"\n{tool_input=}")
+
+    result = tool._run(tool_input, mode="flipside")
+    print(f"{result=}")
+    num_items = len(result)
+    assert num_items == 3
+
+
+def test_query_snowflake_database_tool_dict_str_flipside(snowflake_container):
+    tool = QuerySnowflakeDatabaseTool(db=snowflake_container)
+
+    tool_input = "database: ethereum, schema: beacon_chain, query: select * from ethereum.beacon_chain.fact_attestations limit 3"
+    print(f"\n{tool_input=}")
+
+    result = tool._run(tool_input, mode="flipside")
+    print(f"{result=}")
+    num_items = len(result)
+    assert num_items == 3
+
+
+def test_query_snowflake_database_tool_str_flipside(snowflake_container):
+    tool = QuerySnowflakeDatabaseTool(db=snowflake_container)
+
+    tool_input = "select * from ethereum.beacon_chain.fact_attestations limit 3"
+    print(f"\n{tool_input=}")
+
+    result = tool._run(tool_input, mode="flipside")
+    print(f"{result=}")
+    num_items = len(result)
+    assert num_items == 3
+
+
+@pytest.mark.skip(reason="Shroomdk is deprecated")
 def test_query_snowflake_database_tool_dict_shroomdk(snowflake_container):
     tool = QuerySnowflakeDatabaseTool(db=snowflake_container)
 
@@ -80,6 +122,7 @@ def test_query_snowflake_database_tool_dict_shroomdk(snowflake_container):
     assert num_items == 3
 
 
+@pytest.mark.skip(reason="Shroomdk is deprecated")
 def test_query_snowflake_database_tool_dict_str_shroomdk(snowflake_container):
     tool = QuerySnowflakeDatabaseTool(db=snowflake_container)
 
@@ -92,6 +135,7 @@ def test_query_snowflake_database_tool_dict_str_shroomdk(snowflake_container):
     assert num_items == 3
 
 
+@pytest.mark.skip(reason="Shroomdk is deprecated")
 def test_query_snowflake_database_tool_str_shroomdk(snowflake_container):
     tool = QuerySnowflakeDatabaseTool(db=snowflake_container)
 

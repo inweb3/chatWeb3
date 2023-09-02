@@ -11,7 +11,8 @@ tool:
   query_database_tool_top_k: 10
   check_table_summary_tool_mode: local
   check_table_metadata_tool_mode: local
-  query_database_tool_mode: shroomdk
+  # query_database_tool_mode: shroomdk
+  query_database_tool_mode: flipside
 
 # agent_chain:
 #  agent_executor_return_intermedidate_steps: false
