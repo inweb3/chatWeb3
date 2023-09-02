@@ -6,7 +6,10 @@ This file contains the tests for the tool_custom module.
 import pytest
 
 from chatweb3.tools.snowflake_database.tool_custom import (
-    CheckTableMetadataTool, CheckTableSummaryTool, QueryDatabaseTool)
+    CheckTableMetadataTool,
+    CheckTableSummaryTool,
+    QueryDatabaseTool,
+)
 
 
 def test_check_table_summary_tool_local(
@@ -31,6 +34,46 @@ def test_check_table_metadata_tool_local(snowflake_container_eth_core):
         tool._run("invalid_input")
 
 
+def test_query_database_tool_str_flipside(snowflake_container_eth_core):
+    tool = QueryDatabaseTool(db=snowflake_container_eth_core)
+
+    tool_input = "select * from ethereum.beacon_chain.fact_attestations limit 3"
+
+    result = tool._run(tool_input, mode="flipside")
+    print(f"{result=}")
+    num_items = len(result)
+    assert num_items == 3
+
+
+def test_query_database_tool_dict_flipside(snowflake_container_eth_core):
+    tool = QueryDatabaseTool(db=snowflake_container_eth_core)
+
+    tool_input = {
+        "query": "select * from ethereum.beacon_chain.fact_attestations limit 3",
+    }
+    print(f"\n{tool_input=}")
+
+    result = tool._run(tool_input, mode="flipside")
+    print(f"{result=}")
+    num_items = len(result)
+    assert num_items == 3
+
+
+def test_query_database_tool_dict_str_flipside(snowflake_container_eth_core):
+    tool = QueryDatabaseTool(db=snowflake_container_eth_core)
+
+    tool_input = (
+        '{"query": "select * from ethereum.beacon_chain.fact_attestations limit 3"}'
+    )
+    print(f"\n{tool_input=}")
+
+    result = tool._run(tool_input, mode="flipside")
+    print(f"{result=}")
+    num_items = len(result)
+    assert num_items == 3
+
+
+@pytest.mark.skip(reason="shroomdk is deprecated")
 def test_query_database_tool_str_shroomdk(snowflake_container_eth_core):
     tool = QueryDatabaseTool(db=snowflake_container_eth_core)
 
@@ -42,6 +85,7 @@ def test_query_database_tool_str_shroomdk(snowflake_container_eth_core):
     assert num_items == 3
 
 
+@pytest.mark.skip(reason="shroomdk is deprecated")
 def test_query_database_tool_dict_shroomdk(snowflake_container_eth_core):
     tool = QueryDatabaseTool(db=snowflake_container_eth_core)
 
@@ -56,6 +100,7 @@ def test_query_database_tool_dict_shroomdk(snowflake_container_eth_core):
     assert num_items == 3
 
 
+@pytest.mark.skip(reason="shroomdk is deprecated")
 def test_query_database_tool_dict_str_shroomdk(snowflake_container_eth_core):
     tool = QueryDatabaseTool(db=snowflake_container_eth_core)
 

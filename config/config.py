@@ -27,6 +27,9 @@ class Config:
             "password": os.getenv("SNOWFLAKE_PASSWORD"),
             "account_identifier": os.getenv("SNOWFLAKE_ACCOUNT_IDENTIFIER"),
         }
+        self.config["flipside_params"] = {
+            "flipside_api_key": os.getenv("FLIPSIDE_API_KEY"),
+        }
         self.config["shroomdk_params"] = {
             "shroomdk_api_key": os.getenv("SHROOMDK_API_KEY"),
         }

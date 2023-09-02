@@ -3,6 +3,7 @@ import logging
 import re
 from typing import Any, Dict, List, Optional, Union, cast
 
+from flipside import Flipside
 from langchain.base_language import BaseLanguageModel
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
@@ -33,7 +34,7 @@ from config.config import agent_config
 from config.logging_config import get_logger
 
 logger = get_logger(
-    __name__, log_level=logging.INFO, log_to_console=True, log_to_file=True
+    __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
 )
 
 
@@ -353,7 +354,7 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
     ) -> Union[str, List[Any]]:
         """Execute the query, return the results or an error message."""
 
-        if mode not in ["shroomdk", "snowflake", "default"]:
+        if mode not in ["flipside", "shroomdk", "snowflake", "default"]:
             raise ValueError(f"Invalid mode: {mode}")
 
         if args:
@@ -370,6 +371,13 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
         schema = input_dict["schema"]
         query = input_dict["query"]
 
+        if mode == "flipside":
+            logger.debug(f"{mode=}, flipside {query=}")
+            result_set = self.db.flipside.query(query)
+            logger.debug(f"flipside {result_set.rows=}")
+            result_flipside: List[Any] = result_set.rows
+            return result_flipside
+
         if mode == "snowflake":
             snowflake_database = self.db.get_database(database, schema)
             result_snowflake = snowflake_database.run_no_throw(query)
@@ -378,20 +386,27 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
             return result_snowflake
 
         if mode == "shroomdk":
+            logger.debug(f"{mode=}, shroomdk {query=}")
             result_set = self.db.shroomdk.query(query)
             logger.debug(f"shroomdk {result_set.rows=}")
             result_shroomdk: List[Any] = result_set.rows
             return result_shroomdk
 
         if mode == "default":
-            # try to use shroomdk first
+            # try to use flipside first
             try:
-                result_set = self.db.shroomdk.query(query)
-                logger.debug(
-                    f"shroomdk result: {result_set=}, to return {result_set.rows=}"
-                )
-                result_shroomdk = result_set.rows
-                return result_shroomdk
+                logger.debug(f"{mode=}, flipside {query=}")
+                result_set = self.db.flipside.query(query)
+                logger.debug(f"flipside {result_set.rows=}")
+                result_flipside: List[Any] = result_set.rows
+                return result_flipside
+                # logger.debug(f"{mode=}, shroomdk {query=}")
+                # result_set = self.db.shroomdk.query(query)
+                # logger.debug(
+                #     f"shroomdk result: {result_set=}, to return {result_set.rows=}"
+                # )
+                # result_shroomdk = result_set.rows
+                # return result_shroomdk
             except Exception:
                 # if shroomdk fails, use snowflake
                 try:

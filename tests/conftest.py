@@ -15,6 +15,7 @@ from create_agent import INDEX_ANNOTATION_FILE_PATH, LOCAL_INDEX_FILE_PATH
 def snowflake_params():
     return {
         **agent_config.get("snowflake_params"),
+        **agent_config.get("flipside_params"),
         **agent_config.get("shroomdk_params"),
     }
 

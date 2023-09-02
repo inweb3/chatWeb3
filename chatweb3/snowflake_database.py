@@ -2,6 +2,7 @@
 import logging
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+from flipside import Flipside
 from langchain.sql_database import SQLDatabase
 from shroomdk import ShroomDK
 from sqlalchemy import MetaData, create_engine, text
@@ -178,6 +179,7 @@ class SnowflakeContainer:
         account_identifier: str,
         local_index_file_path: Optional[str] = None,
         index_annotation_file_path: Optional[str] = None,
+        flipside_api_key: Optional[str] = None,
         shroomdk_api_key: Optional[str] = None,
         verbose: bool = False,
     ):
@@ -202,17 +204,28 @@ class SnowflakeContainer:
             annotation_file_path=index_annotation_file_path,
             verbose=verbose,
         )
+        self._flipside = (
+            Flipside(flipside_api_key) if flipside_api_key is not None else None
+        )
         self._shroomdk = (
             ShroomDK(shroomdk_api_key) if shroomdk_api_key is not None else None
         )
 
     @property
-    def shroomdk(self):
-        if self._shroomdk is None:
+    def flipside(self):
+        if self._flipside is None:
             raise AttributeError(
-                "Shroomdk attribute is not found in the SnowflakeContainer; please double check whether your SHROOMDK_API_KEY is set correctly in the .env file"
+                "Flipside attribute is not found in the SnowflakeContainer; please double check whether your FLIPSIDE_API_KEY is set correctly in the .env file"
             )
-        return self._shroomdk
+        return self._flipside
+
+    # @property
+    # def shroomdk(self):
+    #     if self._shroomdk is None:
+    #         raise AttributeError(
+    #             "Shroomdk attribute is not found in the SnowflakeContainer; please double check whether your SHROOMDK_API_KEY is set correctly in the .env file"
+    #         )
+    #     return self._shroomdk
 
     def _create_engine(self, database: str) -> Engine:
         """Create a Snowflake engine with the given database
