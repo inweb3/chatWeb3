@@ -101,6 +101,9 @@ def create_agent_executor(conversation_mode=False):
         memory = ConversationBufferMemory(
             memory_key="chat_history", return_messages=True
         )
+        # We have to explicitly specify the output key, see:
+        # https://github.com/langchain-ai/langchain/issues/3091
+        memory.output_key = "output"
 
         agent_executor = create_snowflake_conversational_chat_agent(
             llm=llm,
@@ -109,7 +112,8 @@ def create_agent_executor(conversation_mode=False):
             suffix=CUSTOM_CONV_SNOWFLAKE_SUFFIX,
             format_instructions=CUSTOM_CONV_FORMAT_INSTRUCTIONS,
             memory=memory,
-            return_intermediate_steps=False,
+            # return_intermediate_steps=False,
+            return_intermediate_steps=True,
             top_k=QUERY_DATABASE_TOOL_TOP_K,
             max_iterations=15,
             max_execution_time=300,
