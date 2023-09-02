@@ -17,9 +17,10 @@ from chatweb3.agents.agent_toolkits.snowflake.base import (
 from chatweb3.agents.agent_toolkits.snowflake.prompt import (
     CUSTOM_CONV_SNOWFLAKE_PREFIX,
     CUSTOM_CONV_SNOWFLAKE_SUFFIX,
-    CUSTOM_FORMAT_INSTRUCTIONS,
+    CUSTOM_CONV_FORMAT_INSTRUCTIONS,
     CUSTOM_SNOWFLAKE_PREFIX,
     CUSTOM_SNOWFLAKE_SUFFIX,
+    CUSTOM_FORMAT_INSTRUCTIONS,
 )
 from chatweb3.agents.agent_toolkits.snowflake.toolkit_custom import (
     CustomSnowflakeDatabaseToolkit,
@@ -74,6 +75,9 @@ def create_agent_executor(conversation_mode=False):
     )
 
     snowflake_container_eth_core = SnowflakeContainer(
+        **agent_config.get("flipside_params")
+        if agent_config.get("flipside_params")
+        else {},
         **agent_config.get("snowflake_params")
         if agent_config.get("snowflake_params")
         else {},
@@ -103,7 +107,7 @@ def create_agent_executor(conversation_mode=False):
             toolkit=snowflake_toolkit,
             prefix=CUSTOM_CONV_SNOWFLAKE_PREFIX,
             suffix=CUSTOM_CONV_SNOWFLAKE_SUFFIX,
-            format_instructions=CUSTOM_FORMAT_INSTRUCTIONS,
+            format_instructions=CUSTOM_CONV_FORMAT_INSTRUCTIONS,
             memory=memory,
             return_intermediate_steps=False,
             top_k=QUERY_DATABASE_TOOL_TOP_K,

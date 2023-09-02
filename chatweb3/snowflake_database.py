@@ -17,7 +17,7 @@ from sqlalchemy.schema import CreateTable
 from config.logging_config import get_logger
 
 logger = get_logger(
-    __name__, log_level=logging.INFO, log_to_console=True, log_to_file=True
+    __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
 )
 
 
@@ -174,13 +174,13 @@ class SnowflakeDatabase(SQLDatabase):
 class SnowflakeContainer:
     def __init__(
         self,
+        flipside_api_key: str,
         user: str,
         password: str,
         account_identifier: str,
+        shroomdk_api_key: Optional[str] = None,
         local_index_file_path: Optional[str] = None,
         index_annotation_file_path: Optional[str] = None,
-        flipside_api_key: Optional[str] = None,
-        shroomdk_api_key: Optional[str] = None,
         verbose: bool = False,
     ):
         """Create a Snowflake container.
