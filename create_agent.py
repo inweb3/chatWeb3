@@ -15,19 +15,26 @@ from chatweb3.agents.agent_toolkits.snowflake.base import (
     create_snowflake_conversational_chat_agent,
 )
 from chatweb3.agents.agent_toolkits.snowflake.prompt import (
-    CUSTOM_CONV_SNOWFLAKE_PREFIX,
-    CUSTOM_CONV_SNOWFLAKE_SUFFIX,
-    CUSTOM_CONV_FORMAT_INSTRUCTIONS,
     CUSTOM_SNOWFLAKE_PREFIX,
     CUSTOM_SNOWFLAKE_SUFFIX,
     CUSTOM_FORMAT_INSTRUCTIONS,
 )
+from chatweb3.agents.conversational_chat.prompt import (
+    # CUSTOM_CONV_SNOWFLAKE_PREFIX,
+    # CUSTOM_CONV_SNOWFLAKE_SUFFIX,
+    CONV_SNOWFLAKE_PREFIX,
+    CONV_SNOWFLAKE_SUFFIX,
+    CUSTOM_CONV_FORMAT_INSTRUCTIONS,
+)
+
 from chatweb3.agents.agent_toolkits.snowflake.toolkit_custom import (
     CustomSnowflakeDatabaseToolkit,
 )
 from chatweb3.callbacks.logger_callback import LoggerCallbackHandler
 from chatweb3.snowflake_database import SnowflakeContainer
 from config.config import agent_config
+
+# from chatweb3.agents.conversational_chat.output_parser import ChatWeb3ConvOutputParser
 
 # from config.logging_config import get_logger
 from loguru import logger
@@ -105,21 +112,29 @@ def create_agent_executor(conversation_mode=False):
         # https://github.com/langchain-ai/langchain/issues/3091
         memory.output_key = "output"
 
+        # output_parser = ChatWeb3ConvOutputParser()
+
         agent_executor = create_snowflake_conversational_chat_agent(
+            # for llm chain of agent
             llm=llm,
+            # for prompt of llm chain
+            prefix=CONV_SNOWFLAKE_PREFIX,
+            suffix=CONV_SNOWFLAKE_SUFFIX,
+            # format_instructions=CUSTOM_CONV_FORMAT_INSTRUCTIONS,
+            # shared by agent and aent executor chain
             toolkit=snowflake_toolkit,
-            prefix=CUSTOM_CONV_SNOWFLAKE_PREFIX,
-            suffix=CUSTOM_CONV_SNOWFLAKE_SUFFIX,
-            format_instructions=CUSTOM_CONV_FORMAT_INSTRUCTIONS,
-            memory=memory,
-            # return_intermediate_steps=False,
+            # for agent
+            # output_parser=output_parser,
+            # for agent executor
             return_intermediate_steps=True,
             top_k=QUERY_DATABASE_TOOL_TOP_K,
             max_iterations=15,
             max_execution_time=300,
             early_stopping_method="force",
+            # for chains
             callbacks=callbacks,
             verbose=True,
+            memory=memory,
         )
 
     else:
