@@ -17,7 +17,7 @@ from config.logging_config import get_logger
 from create_agent import create_agent_executor
 
 logger = get_logger(
-    __name__, log_level=logging.INFO, log_to_console=True, log_to_file=True
+    __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
 )
 
 load_dotenv()
@@ -55,25 +55,50 @@ def format_response(response: dict) -> str:
     Returns:
     formatted_output (str): The formatted output string
     """
-    output = response["output"]
-    intermediate_steps = response["intermediate_steps"]
-    logger.debug(f"intermediate_steps: {intermediate_steps}")
+    logger.debug(f"response: {response}")
 
-    formatted_steps = []
-    for i, step in enumerate(intermediate_steps, start=1):
-        agent_action, text = step
-        text = re.sub(r"`|\\", "", str(text))  # remove problematic characters
-        text = text.strip().replace("\n", "\n  ")
-        log = agent_action.log
-        thought, action = log.strip().split("\nAction:")
-        thought = thought.replace("Thought: ", "") if i == 1 else thought
-        formatted_steps.append(
-            f"**Thought {i}**: {thought}\n\n*Action:*\n\n\tTool: {agent_action.tool}"
-            f"\n\n\tTool input: {agent_action.tool_input}\n\n*Observation:*\n\n{text}"
+    if CONVERSATION_MODE:
+        chat_history = response["chat_history"]
+        intermediate_steps = response["intermediate_steps"]
+
+        formatted_steps = []
+        for i, step in enumerate(intermediate_steps, start=1):
+            agent_action, text = step
+            text = re.sub(r"`|\\", "", str(text))  # remove problematic characters
+            text = text.strip().replace("\n", "\n  ")
+            formatted_steps.append(
+                f"*Action*: {agent_action.tool}\n\n*Observation*: {text}"
+            )
+
+        chat_messages = "\n\n".join(
+            [f"**{msg.__class__.__name__}**: {msg.content}" for msg in chat_history]
         )
+        separator = "\n\n"
+        formatted_steps_str = separator.join(formatted_steps)
+        formatted_output = f"{chat_messages}{separator}{formatted_steps_str}"
 
-    formatted_output = "\n\n".join(formatted_steps)
-    formatted_output += f"\n\n**Final answer**: {output}"
+        # formatted_output = f"{chat_messages}\n\n{'\n\n'.join(formatted_steps)}"
+
+    else:
+        output = response["output"]
+        intermediate_steps = response["intermediate_steps"]
+        logger.debug(f"intermediate_steps: {intermediate_steps}")
+
+        formatted_steps = []
+        for i, step in enumerate(intermediate_steps, start=1):
+            agent_action, text = step
+            text = re.sub(r"`|\\", "", str(text))  # remove problematic characters
+            text = text.strip().replace("\n", "\n  ")
+            log = agent_action.log
+            thought, action = log.strip().split("\nAction:")
+            thought = thought.replace("Thought: ", "") if i == 1 else thought
+            formatted_steps.append(
+                f"**Thought {i}**: {thought}\n\n*Action:*\n\n\tTool: {agent_action.tool}"
+                f"\n\n\tTool input: {agent_action.tool_input}\n\n*Observation:*\n\n{text}"
+            )
+
+        formatted_output = "\n\n".join(formatted_steps)
+        formatted_output += f"\n\n**Final answer**: {output}"
 
     return formatted_output
 
@@ -129,6 +154,7 @@ def chat(inp, history, agent):
         print("inp: " + inp)
         response = agent(inp)
         answer = str(response["output"])
+        logger.debug(f"answer: {answer}")
         thought_process_text = format_response(response)
         history.append((inp, answer))
 

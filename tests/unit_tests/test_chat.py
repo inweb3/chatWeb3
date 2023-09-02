@@ -3,6 +3,7 @@ test_chat.py
 This file contains the tests for the main chat module.
 """
 import os
+import pytest
 from unittest.mock import Mock
 
 from chat_ui import (
@@ -28,7 +29,85 @@ def test_set_openai_api_key():
         os.environ["OPENAI_API_KEY"] = original_key
 
 
-def test_format_response():
+# Mock classes
+class HumanMessage:
+    def __init__(self, content, additional_kwargs=None, example=False):
+        self.content = content
+        self.additional_kwargs = additional_kwargs or {}
+        self.example = example
+
+
+class AIMessage:
+    def __init__(self, content, additional_kwargs=None, example=False):
+        self.content = content
+        self.additional_kwargs = additional_kwargs or {}
+        self.example = example
+
+
+class AgentAction:
+    def __init__(self, tool, tool_input, log):
+        self.tool = tool
+        self.tool_input = tool_input
+        self.log = log
+
+
+# Test data
+response = {
+    "input": "What is yesterday's total trading volume on Uniswap in USD?",
+    "chat_history": [
+        HumanMessage(
+            content="What is yesterday's total trading volume on Uniswap in USD?"
+        ),
+        AIMessage(content="I don't know"),
+    ],
+    "output": "I don't know",
+    "intermediate_steps": [
+        (
+            AgentAction(
+                tool="check_available_tables_summary",
+                tool_input="",
+                log='{\n    "action": "check_available_tables_summary",\n    "action_input": ""\n}',
+            ),
+            "'ethereum.core.dim_labels': the 'dim_labels' table in 'core' schema of 'ethereum' database. This table contains labels for addresses on the Ethereum Blockchain.\n\n... etc.",
+        )
+    ],
+}
+
+
+# Test data
+response = {
+    "input": "What is yesterday's total trading volume on Uniswap in USD?",
+    "chat_history": [
+        HumanMessage(
+            content="What is yesterday's total trading volume on Uniswap in USD?"
+        ),
+        AIMessage(content="I don't know"),
+    ],
+    "output": "I don't know",
+    "intermediate_steps": [
+        (
+            AgentAction(
+                tool="check_available_tables_summary",
+                tool_input="",
+                log='{\n    "action": "check_available_tables_summary",\n    "action_input": ""\n}',
+            ),
+            "'ethereum.core.dim_labels': the 'dim_labels' table in 'core' schema of 'ethereum' database. This table contains labels for addresses on the Ethereum Blockchain.\n\n... etc.",
+        )
+    ],
+}
+expected_output = "**HumanMessage**: What is yesterday's total trading volume on Uniswap in USD?\n\n**AIMessage**: I don't know\n\n*Action*: check_available_tables_summary\n\n*Observation*: 'ethereum.core.dim_labels': the 'dim_labels' table in 'core' schema of 'ethereum' database. This table contains labels for addresses on the Ethereum Blockchain.\n  \n  ... etc."
+
+
+# Actual pytest
+def test_format_response_chat_conversational():
+    global CONVERSATION_MODE
+    CONVERSATION_MODE = True  # Ensure the CONVERSATION_MODE is set to True
+    output = format_response(response)
+    print(f"{output=}")
+    assert output == expected_output
+
+
+def test_format_response_chat():
     step1 = Mock()
     step1.log = "Thought: step1\nAction: "
     step1.tool = None
