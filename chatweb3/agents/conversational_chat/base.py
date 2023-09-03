@@ -35,38 +35,38 @@ class SnowflakeConversationalChatAgent(ConversationalChatAgent):
     def _get_default_output_parser(cls, **kwargs: Any) -> AgentOutputParser:
         return ChatWeb3ConvOutputParser()
 
-    @classmethod
-    def create_prompt(
-        cls,
-        tools: Sequence[BaseTool],
-        system_message: str = CONV_SNOWFLAKE_PREFIX,
-        human_message: str = CONV_SNOWFLAKE_SUFFIX,
-        input_variables: Optional[List[str]] = None,
-        output_parser: Optional[BaseOutputParser] = None,
-    ) -> BasePromptTemplate:
-        tool_strings = "\n".join(
-            [f"> {tool.name}: {tool.description}" for tool in tools]
-        )
-        tool_names = ", ".join([tool.name for tool in tools])
-        _output_parser = output_parser or cls._get_default_output_parser()
-        logger.debug(f"_output_parser: {_output_parser}")
-        logger.debug(f"{_output_parser.get_format_instructions()=}")
-        logger.debug(f"{human_message=}")
-        format_instructions = human_message.format(
-            format_instructions=_output_parser.get_format_instructions()
-        )
-        final_prompt = format_instructions.format(
-            tool_names=tool_names, tools=tool_strings
-        )
-        if input_variables is None:
-            input_variables = ["input", "chat_history", "agent_scratchpad"]
-        messages = [
-            SystemMessagePromptTemplate.from_template(system_message),
-            MessagesPlaceholder(variable_name="chat_history"),
-            HumanMessagePromptTemplate.from_template(final_prompt),
-            MessagesPlaceholder(variable_name="agent_scratchpad"),
-        ]
-        return ChatPromptTemplate(input_variables=input_variables, messages=messages)
+    # @classmethod
+    # def create_prompt(
+    #     cls,
+    #     tools: Sequence[BaseTool],
+    #     system_message: str = CONV_SNOWFLAKE_PREFIX,
+    #     human_message: str = CONV_SNOWFLAKE_SUFFIX,
+    #     input_variables: Optional[List[str]] = None,
+    #     output_parser: Optional[BaseOutputParser] = None,
+    # ) -> BasePromptTemplate:
+    #     tool_strings = "\n".join(
+    #         [f"> {tool.name}: {tool.description}" for tool in tools]
+    #     )
+    #     tool_names = ", ".join([tool.name for tool in tools])
+    #     _output_parser = output_parser or cls._get_default_output_parser()
+    #     logger.debug(f"_output_parser: {_output_parser}")
+    #     logger.debug(f"{_output_parser.get_format_instructions()=}")
+    #     logger.debug(f"{human_message=}")
+    #     format_instructions = human_message.format(
+    #         format_instructions=_output_parser.get_format_instructions()
+    #     )
+    #     final_prompt = format_instructions.format(
+    #         tool_names=tool_names, tools=tool_strings
+    #     )
+    #     if input_variables is None:
+    #         input_variables = ["input", "chat_history", "agent_scratchpad"]
+    #     messages = [
+    #         SystemMessagePromptTemplate.from_template(system_message),
+    #         MessagesPlaceholder(variable_name="chat_history"),
+    #         HumanMessagePromptTemplate.from_template(final_prompt),
+    #         MessagesPlaceholder(variable_name="agent_scratchpad"),
+    #     ]
+    #     return ChatPromptTemplate(input_variables=input_variables, messages=messages)
 
     # @classmethod
     # def create_prompt(
