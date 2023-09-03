@@ -16,6 +16,7 @@ from config.config import agent_config
 from config.logging_config import get_logger
 from create_agent import create_agent_executor
 
+
 logger = get_logger(
     __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
 )
