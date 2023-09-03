@@ -225,12 +225,12 @@ def chat(inp, history, agent):
             history.append((inp, thought_process_text))
 
     # Debugging: log the types and values of the returned variables
-    logger.debug(
-        f"Returning from chat(): history type: {type(history)}, history value: {history}"
-    )
-    logger.debug(
-        f"Returning from chat(): thought_process_text type: {type(thought_process_text)}, thought_process_text value: {thought_process_text}"
-    )
+    # logger.debug(
+    #     f"Returning from chat(): history type: {type(history)}, history value: {history}"
+    # )
+    # logger.debug(
+    #     f"Returning from chat(): thought_process_text type: {type(thought_process_text)}, thought_process_text value: {thought_process_text}"
+    # )
 
     return history, history, thought_process_text
 
