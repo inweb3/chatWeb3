@@ -54,6 +54,9 @@ SELECT_SNOWFLAKE_DATABASE_SCHEMA_TOOL_NAME = "select_snowflake_db_schema"
 DEFAULT_DATABASE = agent_config.get("database.default_database")
 DEFAULT_SCHEMA = agent_config.get("database.default_schema")
 
+FLIPSIDE_QUERY_TIMEOUT = agent_config.get("flipside.query_timeout")
+FLIPSIDE_QUERY_MAX_RETRIES = agent_config.get("flipside.query_max_retries")
+
 
 class ListSnowflakeDatabaseTableNamesToolInput(BaseToolInput):
     database_name: str = Field(
@@ -380,13 +383,18 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
 
         if mode == "flipside":
             logger.debug(f"{mode=}, flipside {query=}")
-            try:
-                result_set = self.db.flipside.query(query)
-                result_flipside: List[Any] = result_set.rows
-                logger.debug(f"flipside {result_set.rows=}")
-                return result_flipside
-            except Exception as e:
-                return f"Query Error: {e}"
+            result_flipside: List[Any] = None
+            for i in range(FLIPSIDE_QUERY_MAX_RETRIES):
+                try:
+                    result_set = self.db.flipside.query(
+                        query, timeout_minutes=FLIPSIDE_QUERY_TIMEOUT
+                    )
+                    result_flipside = result_set.rows
+                    logger.debug(f"Flipside {i}th query {result_set.rows=}")
+                    break
+                except Exception as e:
+                    result_flipside = [f"Flipside {i}th Query Error: {e}"]
+            return result_flipside
 
         if mode == "snowflake":
             snowflake_database = self.db.get_database(database, schema)

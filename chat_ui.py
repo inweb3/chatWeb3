@@ -111,6 +111,19 @@ def clean_text(text):
     return text.strip().replace("\n", "\n  ")
 
 
+# def split_text(text, max_line_length=80):
+#     """Split text into multiple lines of a maximum length."""
+#     if text is None:
+#         return ""
+#     text = str(text)
+#     lines = []
+#     for i in range(0, len(text), max_line_length):
+#         # lines.append(text[i : i + max_line_length])
+#         line = text[i: i + max_line_length]
+#         lines.append('\t' + line)
+#     return "\n".join(lines)
+
+
 def format_response(response: dict) -> str:
     logger.debug(f"response: {response}")
 
@@ -127,9 +140,13 @@ def format_response(response: dict) -> str:
             thought, action = log.strip().split("\nAction:")
             thought = thought.replace("Thought: ", "") if i == 1 else thought
             formatted_steps.append(
-                f"**Thought {i}**: {thought}\n\n*Action:*\n\n\tTool: {agent_action.tool}"
-                f"\n\n\tTool input: {agent_action.tool_input}\n\n*Observation:*\n\n{text}"
+                f"**Thought {i}**: {thought}\n\n*Action:*\n\nTool: {agent_action.tool}"
+                f"\n\nTool input: {agent_action.tool_input}\n\n*Observation:*\n\n{text}"
             )
+            # formatted_steps.append(
+            #     f"**Thought {i}**: {thought}\n\n*Action:*\n\n\tTool: {split_text(agent_action.tool)}"
+            #     f"\n\n\tTool input: {split_text(agent_action.tool_input)}\n\n*Observation:*\n\n{text}"
+            # )
 
     formatted_output = "\n\n".join(formatted_steps)
 

@@ -81,7 +81,7 @@ def test_format_response():
         }
         expected_output = "**HumanMessage**: What is yesterday's total trading volume on Uniswap in USD?\n\n**AIMessage**: I don't know\n\n*Action*: check_available_tables_summary\n\n*Observation*: 'ethereum.core.dim_labels': the 'dim_labels' table in 'core' schema of 'ethereum' database. This table contains labels for addresses on the Ethereum Blockchain.\n  \n  ... etc."
         output = format_response(response)
-        # print(f"{output=}")
+        print(f"{output=}")
         assert output == expected_output
     else:
         step1 = Mock()
@@ -101,8 +101,41 @@ def test_format_response():
                 (step2, "step2_text"),
             ],
         }
-        expected_output = "**Thought 1**: step1\n\n*Action:*\n\n\tTool: None\n\n\tTool input: None\n\n*Observation:*\n\nstep1_text\n\n**Thought 2**: Thought: step2\n\n*Action:*\n\n\tTool: None\n\n\tTool input: None\n\n*Observation:*\n\nstep2_text\n\n**Final answer**: output"
-        assert format_response(response) == expected_output
+        # expected_output = "**Thought 1**: step1\n\n*Action:*\n\nTool: \n\nTool input: \n\n*Observation:*\n\nstep1_text\n\n**Thought 2**: Thought: step2\n\n*Action:*\n\nTool: \n\nTool input: \n\n*Observation:*\n\nstep2_text\n\n**Final answer**: output"
+        expected_output = "**Thought 1**: step1\n\n*Action:*\n\nTool: None\n\nTool input: None\n\n*Observation:*\n\nstep1_text\n\n**Thought 2**: Thought: step2\n\n*Action:*\n\nTool: None\n\nTool input: None\n\n*Observation:*\n\nstep2_text\n\n**Final answer**: output"
+        output = format_response(response)
+        print(f"{output=}")
+        assert output == expected_output
+        # # Test when agent_action.tool and agent_action.tool_input are long strings
+        # step = Mock()
+        # step.log = "Thought: step\nAction: "
+        # step.tool = "a" * 100  # Long string
+        # step.tool_input = "b" * 100  # Long string
+        # response = {
+        #     "output": "output",
+        #     "intermediate_steps": [(step, "step_text")],
+        # }
+        # output = format_response(response)
+        # assert "a" * 80 in output  # First line of the split string
+        # assert "a" * 20 in output  # Second line of the split string
+        # assert "b" * 80 in output  # First line of the split string
+        # assert "b" * 20 in output  # Second line of the split string
+
+        # # Test when agent_action.tool and agent_action.tool_input are None
+        # step.tool = None
+        # step.tool_input = None
+        # output = format_response(response)
+        # assert (
+        #     "Tool: \n\nTool input: " in output
+        # )  # Check that None is replaced with an empty string
+
+        # # Test when agent_action.tool and agent_action.tool_input are not strings
+        # step.tool = 123
+        # step.tool_input = 456
+        # output = format_response(response)
+        # assert (
+        #     "Tool: 123\n\nTool input: 456" in output
+        # )  # Check that non-string objects are converted to strings
 
 
 def test_chat():

@@ -2,7 +2,6 @@
 
 from chatweb3.tools.snowflake_database.prompt import (
     TOOLKIT_INSTRUCTIONS,
-    CUSTOM_TOOLKIT_INSTRUCTIONS,
 )
 
 SNOWFLAKE_SYSTEM_MESSAGE_PREFIX = """You are an agent especially good at interacting with Snowflake databases.
@@ -27,7 +26,7 @@ Begin! Remember to use concise responses so you have space to include the action
 
 
 SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS = (
-    "\n" + CUSTOM_TOOLKIT_INSTRUCTIONS + "\n\n" + SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX
+    "\n" + TOOLKIT_INSTRUCTIONS + "\n\n" + SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX
 )
 
 # SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS = (
