@@ -46,15 +46,16 @@ from config.config import agent_config
 # from chatweb3.agents.conversational_chat.output_parser import ChatWeb3ConvOutputParser
 
 # from config.logging_config import get_logger
-from loguru import logger
-from langchain.callbacks import FileCallbackHandler
+# from loguru import logger
+
+# from langchain.callbacks import FileCallbackHandler
 
 # logger = get_logger(
 #     __name__, log_level=logging.INFO, log_to_console=True, log_to_file=True
 # )
 
-logfile = os.path.join(os.path.dirname(__file__), "logs", "agent.log")
-logger.add(logfile, colorize=True, enqueue=True)
+# logfile = os.path.join(os.path.dirname(__file__), "logs", "agent.log")
+# logger.add(logfile, colorize=True, enqueue=True)
 # file_callback_handler = FileCallbackHandler(logfile)
 log_callback_handler = LoggerCallbackHandler()
 

@@ -41,8 +41,6 @@ make integration_tests
 
 General configuration can be done through `config/config.yaml`
 
-Conversational chat agent can be enabled by setting the `CONVERSATIOn_MODE` to 'TRUE' in `chat_ui.py`.
-
 To enable detailed log, set the log_level to `logging.DEBUG` in `logger_callback.py`.
 
 ```
