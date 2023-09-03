@@ -1,4 +1,9 @@
 # config.yaml
+
+agent:
+  conversational_chat: false
+  # conversational_chat mode might require GPT-4 to function properly
+
 database:
   default_database: ethereum
   default_schema: core

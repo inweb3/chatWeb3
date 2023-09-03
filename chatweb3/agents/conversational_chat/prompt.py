@@ -1,5 +1,7 @@
 # flake8: noqa
 
+from chatweb3.tools.snowflake_database.prompt import TOOLKIT_INSTRUCTIONS
+
 # these prompts have been tuned for the chat model output parser
 
 CONV_SNOWFLAKE_PREFIX = """Assistant is a large language model trained by OpenAI.
@@ -25,11 +27,6 @@ Assistant can ask the user to use tools to look up information that may be helpf
 
 {{tools}}
 
-# IMPORTANT:
-# 1. Assistant must ALWAYS check available tables first! That is, NEVER EVER start with checking metadata tools or query database tools, ALWAYS start with the tool that tells you what tables are available in the database.
-# 2. Before generating ANY SQL query, assistant MUST first check the metadata of the table the query will be run against. NEVER EVER generate a SQL query without checking the metadata of the table first.
-# 3. If the assistant checked the tables in the database and found no table is related to the the human's specific question, assistant MUST NOT generate any SQL queries, and MUST respond 'I don't know' as the answer, and ask the human to provide more information.
-
 {format_instructions}
 
 USER'S INPUT
@@ -38,6 +35,35 @@ Here is the user's input (remember to respond with a markdown code snippet of a 
 
 {{{{input}}}}
 """
+
+CONV_SNOWFLAKE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS = CONV_SNOWFLAKE_SUFFIX.replace(
+    "{format_instructions}",
+    "{format_instructions}\n\n" + "EXTREMELY IMPORTANT:\n" + TOOLKIT_INSTRUCTIONS,
+)
+# CONV_SNOWFLAKE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS = CONV_SNOWFLAKE_SUFFIX.replace(
+#     "{{tools}}", "{{tools}}\n\n" + TOOLKIT_INSTRUCTIONS
+# )
+
+
+# CONV_SNOWFLAKE_SUFFIX = """TOOLS
+# ------
+# Assistant can ask the user to use tools to look up information that may be helpful in answering the users original question. The tools the human can use are:
+
+# {{tools}}
+
+# IMPORTANT:
+# 1. Assistant must ALWAYS check available tables first! That is, NEVER EVER start with checking metadata tools or query database tools, ALWAYS start with the tool that tells you what tables are available in the database.
+# 2. Before generating ANY SQL query, assistant MUST first check the metadata of the table the query will be run against. NEVER EVER generate a SQL query without checking the metadata of the table first.
+# 3. If the assistant checked the tables in the database and found no table is related to the the human's specific question, assistant MUST NOT generate any SQL queries, and MUST respond 'I don't know' as the answer, and ask the human to provide more information.
+
+# {format_instructions}
+
+# USER'S INPUT
+# --------------------
+# Here is the user's input (remember to respond with a markdown code snippet of a json blob with a single action, and NOTHING else):
+
+# {{{{input}}}}
+# """
 
 # CUSTOM_CONV_SNOWFLAKE_PREFIX = """Assistant is a large language model trained by OpenAI.
 
@@ -66,7 +92,7 @@ Here is the user's input (remember to respond with a markdown code snippet of a 
 
 # """
 
-CUSTOM_CONV_FORMAT_INSTRUCTIONS = """RESPONSE FORMAT INSTRUCTIONS
+CONV_SNOWFLAKE_FORMAT_INSTRUCTIONS = """RESPONSE FORMAT INSTRUCTIONS
 ----------------------------
 
 When responding to me, please output a response in one of two formats:

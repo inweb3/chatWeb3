@@ -23,9 +23,11 @@ from chatweb3.agents.conversational_chat.prompt import (
     # CUSTOM_CONV_SNOWFLAKE_PREFIX,
     # CUSTOM_CONV_SNOWFLAKE_SUFFIX,
     CONV_SNOWFLAKE_PREFIX,
-    CONV_SNOWFLAKE_SUFFIX,
-    CUSTOM_CONV_FORMAT_INSTRUCTIONS,
+    CONV_SNOWFLAKE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS,
+    # CONV_SNOWFLAKE_FORMAT_INSTRUCTIONS,
+    # CUSTOM_CONV_FORMAT_INSTRUCTIONS,
 )
+
 
 from chatweb3.agents.agent_toolkits.snowflake.toolkit_custom import (
     CustomSnowflakeDatabaseToolkit,
@@ -114,12 +116,16 @@ def create_agent_executor(conversation_mode=False):
 
         # output_parser = ChatWeb3ConvOutputParser()
 
+        # logger.debug(
+        #     f"CONV_SNOWFLAKE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS: {CONV_SNOWFLAKE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS}"
+        # )
+
         agent_executor = create_snowflake_conversational_chat_agent(
             # for llm chain of agent
             llm=llm,
             # for prompt of llm chain
             prefix=CONV_SNOWFLAKE_PREFIX,
-            suffix=CONV_SNOWFLAKE_SUFFIX,
+            suffix=CONV_SNOWFLAKE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS,
             # format_instructions=CUSTOM_CONV_FORMAT_INSTRUCTIONS,
             # shared by agent and aent executor chain
             toolkit=snowflake_toolkit,

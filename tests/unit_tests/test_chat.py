@@ -13,6 +13,11 @@ from chat_ui import (
     split_thought_process_text,
 )
 
+# from chatweb3.chat_ui import CONVERSATION_MODE
+from config.config import agent_config
+
+CONVERSATION_MODE = agent_config.get("agent.conversational_chat")
+
 
 def test_set_openai_api_key():
     original_key = os.getenv("OPENAI_API_KEY")
@@ -99,6 +104,9 @@ expected_output = "**HumanMessage**: What is yesterday's total trading volume on
 
 
 # Actual pytest
+@pytest.mark.skipif(
+    not CONVERSATION_MODE, reason="test only applicable in conversational_chat mode"
+)
 def test_format_response_chat_conversational():
     global CONVERSATION_MODE
     CONVERSATION_MODE = True  # Ensure the CONVERSATION_MODE is set to True

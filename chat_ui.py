@@ -12,7 +12,7 @@ import re
 import gradio as gr  # type: ignore
 from dotenv import load_dotenv
 
-# from config import config
+from config.config import agent_config
 from config.logging_config import get_logger
 from create_agent import create_agent_executor
 
@@ -23,7 +23,9 @@ logger = get_logger(
 load_dotenv()
 
 # CONVERSATION_MODE = False
-CONVERSATION_MODE = True
+# CONVERSATION_MODE = True # require gpt-4 to work well
+
+CONVERSATION_MODE = agent_config.get("agent.conversational_chat")
 
 
 def set_openai_api_key(api_key, agent):
