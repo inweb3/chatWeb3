@@ -15,9 +15,11 @@ from pydantic import Field
 from chatweb3.agents.agent_toolkits.snowflake.toolkit import (
     SnowflakeDatabaseToolkit,
 )
-from chatweb3.tools.snowflake_database.prompt import SNOWFLAKE_QUERY_CHECKER
-from chatweb3.tools.snowflake_database.tool_custom import (
+from chatweb3.tools.snowflake_database.prompt import (
+    SNOWFLAKE_QUERY_CHECKER,
     TOOLKIT_INSTRUCTIONS,
+)
+from chatweb3.tools.snowflake_database.tool_custom import (
     CheckQuerySyntaxTool,
     CheckTableMetadataTool,
     CheckTableSummaryTool,

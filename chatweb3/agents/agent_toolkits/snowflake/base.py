@@ -16,15 +16,26 @@ from langchain.schema import BaseMemory
 from langchain.tools import BaseTool
 
 from chatweb3.agents.agent_toolkits.snowflake.prompt import (
-    CONV_SNOWFLAKE_PREFIX, CONV_SNOWFLAKE_SUFFIX, SNOWFLAKE_PREFIX,
-    SNOWFLAKE_SUFFIX)
-from chatweb3.agents.agent_toolkits.snowflake.toolkit import \
-    SnowflakeDatabaseToolkit
-from chatweb3.agents.agent_toolkits.snowflake.toolkit_custom import \
-    CustomSnowflakeDatabaseToolkit
+    SNOWFLAKE_PREFIX,
+    SNOWFLAKE_SUFFIX,
+)
+from chatweb3.agents.conversational_chat.prompt import (
+    CONV_SNOWFLAKE_PREFIX,
+    CONV_SNOWFLAKE_SUFFIX,
+)
+from chatweb3.agents.agent_toolkits.snowflake.toolkit import SnowflakeDatabaseToolkit
+from chatweb3.agents.agent_toolkits.snowflake.toolkit_custom import (
+    CustomSnowflakeDatabaseToolkit,
+)
 from chatweb3.agents.chat.base import SnowflakeChatAgent
-from chatweb3.agents.conversational_chat.base import \
-    SnowflakeConversationalChatAgent
+from chatweb3.agents.conversational_chat.base import SnowflakeConversationalChatAgent
+
+import logging
+from config.logging_config import get_logger
+
+logger = get_logger(
+    __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
+)
 
 
 def create_snowflake_conversational_chat_agent(
@@ -33,7 +44,7 @@ def create_snowflake_conversational_chat_agent(
     # for prompt of llm chain
     prefix: str = CONV_SNOWFLAKE_PREFIX,
     suffix: str = CONV_SNOWFLAKE_SUFFIX,
-    format_instructions: Optional[str] = None,
+    # format_instructions: Optional[str] = None,
     input_variables: Optional[List[str]] = None,
     top_k: int = 10,
     # system_template: Optional[str] = None,
@@ -85,23 +96,23 @@ def create_snowflake_conversational_chat_agent(
 
     if toolkit is not None:
         prefix = prefix.format(dialect=toolkit.dialect, top_k=top_k)
-        toolkit_instructions = toolkit.instructions
-    else:
-        toolkit_instructions = None
+    #     toolkit_instructions = toolkit.instructions
+    # else:
+    #     toolkit_instructions = None
 
     prompt = SnowflakeConversationalChatAgent.create_prompt(
         tools,
-        toolkit_instructions=toolkit_instructions,
+        # toolkit_instructions=toolkit_instructions,
         system_message=prefix,
         human_message=suffix,
         input_variables=input_variables,
         output_parser=output_parser,
         # prefix=prefix,
         # suffix=suffix,
-        format_instructions=format_instructions if format_instructions else None
+        # format_instructions=format_instructions if format_instructions else None
         # system_template=system_template,
         # human_template=human_template,
-        ** prompt_kwargs,
+        **prompt_kwargs,
     )
     # llm chain
     llm_chain_kwargs = llm_chain_kwargs or {}
