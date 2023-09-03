@@ -154,11 +154,16 @@ def chat(inp, history, agent):
     else:
         print("\n==== date/time: " + str(datetime.datetime.now()) + " ====")
         print("inp: " + inp)
-        response = agent(inp)
-        answer = str(response["output"])
-        logger.debug(f"answer: {answer}")
-        thought_process_text = format_response(response)
-        history.append((inp, answer))
+        try:
+            response = agent(inp)
+            answer = str(response["output"])
+            logger.debug(f"answer: {answer}")
+            thought_process_text = format_response(response)
+            history.append((inp, answer))
+        except Exception as e:
+            logger.error(f"Exception: {e}")
+            thought_process_text = f"Exception: {e}"
+            history.append((inp, thought_process_text))
 
     # Debugging: log the types and values of the returned variables
     logger.debug(

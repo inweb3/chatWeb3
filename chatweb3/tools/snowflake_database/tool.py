@@ -33,6 +33,13 @@ from chatweb3.utils import parse_table_long_name_to_json_list  # parse_str_to_di
 from config.config import agent_config
 from config.logging_config import get_logger
 
+# from flipside.errors import (
+#     QueryRunCancelledError,
+#     QueryRunExecutionError,
+#     QueryRunTimeoutError,
+#     SDKError,
+# )
+
 logger = get_logger(
     __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
 )
@@ -373,10 +380,13 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
 
         if mode == "flipside":
             logger.debug(f"{mode=}, flipside {query=}")
-            result_set = self.db.flipside.query(query)
-            logger.debug(f"flipside {result_set.rows=}")
-            result_flipside: List[Any] = result_set.rows
-            return result_flipside
+            try:
+                result_set = self.db.flipside.query(query)
+                result_flipside: List[Any] = result_set.rows
+                logger.debug(f"flipside {result_set.rows=}")
+                return result_flipside
+            except Exception as e:
+                return f"Query Error: {e}"
 
         if mode == "snowflake":
             snowflake_database = self.db.get_database(database, schema)

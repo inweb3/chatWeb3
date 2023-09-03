@@ -25,8 +25,8 @@ class LoggerCallbackHandler(BaseCallbackHandler):
     ) -> None:
         """Print out the prompts."""
         # class_name = serialized["name"]
-        class_name = serialized
-        logger.debug(f"Starting lLM: {class_name} with prompts: {prompts}")
+        # class_name = serialized
+        logger.debug(f"Starting lLM with prompts: {prompts}")
 
     def on_llm_end(self, response: LLMResult, **kwargs: Any) -> None:
         """Print out the response."""
@@ -47,10 +47,8 @@ class LoggerCallbackHandler(BaseCallbackHandler):
     ) -> None:
         """Print out that we are entering a chain."""
         # class_name = serialized["name"]
-        class_name = serialized
-        logger.debug(
-            f"\n\n\033[1m> Entering new {class_name} chain\033[0m with inputs: {inputs}"
-        )
+        # class_name = serialized
+        logger.debug(f"\n\n\033[1m> Entering new chain\033[0m with inputs: {inputs}")
         # print(f"\n\n\033[1m> Entering new {class_name} chain...\033[0m")
 
     def on_chain_end(self, outputs: Dict[str, Any], **kwargs: Any) -> None:
