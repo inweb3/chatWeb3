@@ -7,6 +7,7 @@ from langchain.agents.agent_toolkits.sql.prompt import SQL_PREFIX, SQL_SUFFIX
 from langchain.agents.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
 from langchain.agents.chat.base import ChatAgent
 from langchain.agents.chat.output_parser import ChatOutputParser
+
 from langchain.agents.chat.prompt import FORMAT_INSTRUCTIONS
 from langchain.callbacks.base import BaseCallbackManager
 from langchain.chains.llm import LLMChain
@@ -15,9 +16,16 @@ from langchain.llms.base import BaseLLM
 from langchain.schema import BaseMemory
 from langchain.tools import BaseTool
 
-from chatweb3.agents.agent_toolkits.snowflake.prompt import (
-    SNOWFLAKE_PREFIX,
-    SNOWFLAKE_SUFFIX,
+# from chatweb3.agents.agent_toolkits.snowflake.prompt import (
+#     SNOWFLAKE_PREFIX,
+#     SNOWFLAKE_SUFFIX,
+# )
+from chatweb3.agents.chat.prompt import (
+    SNOWFLAKE_SYSTEM_MESSAGE_PREFIX,
+    SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX,
+    SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS,
+    SNOWFLAKE_HUMAN_MESSAGE,
+    SNOWFLAKE_FORMAT_INSTRUCTIONS,
 )
 from chatweb3.agents.conversational_chat.prompt import (
     CONV_SNOWFLAKE_PREFIX,
@@ -156,13 +164,16 @@ def create_snowflake_chat_agent(
     # for llm chain of agent
     llm: BaseChatModel,
     # for prompt of llm chain
-    prefix: str = SNOWFLAKE_PREFIX,
-    suffix: str = SNOWFLAKE_SUFFIX,
-    format_instructions: str = FORMAT_INSTRUCTIONS,
+    system_message_prefix: Optional[str] = SNOWFLAKE_SYSTEM_MESSAGE_PREFIX,
+    system_message_suffix: Optional[
+        str
+    ] = SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS,
+    human_message: Optional[str] = SNOWFLAKE_HUMAN_MESSAGE,
+    format_instructions: str = SNOWFLAKE_FORMAT_INSTRUCTIONS,
     input_variables: Optional[List[str]] = None,
     top_k: int = 10,
-    system_template: Optional[str] = None,
-    human_template: Optional[str] = None,
+    # system_template: Optional[str] = None,
+    # human_template: Optional[str] = None,
     # for agent
     output_parser: AgentOutputParser = ChatOutputParser(),
     # for agent executor
@@ -190,20 +201,23 @@ def create_snowflake_chat_agent(
     tools = toolkit.get_tools(callbacks=callbacks, verbose=verbose, **toolkit_kwargs)
     # prompt for llm chain
     prompt_kwargs = prompt_kwargs or {}
-    prefix = prefix.format(dialect=toolkit.dialect, top_k=top_k)
-    if isinstance(toolkit, CustomSnowflakeDatabaseToolkit):
-        instructions = toolkit.instructions
-    else:
-        instructions = ""
+    system_message_prefix = system_message_prefix.format(
+        dialect=toolkit.dialect, top_k=top_k
+    )
+    # if isinstance(toolkit, CustomSnowflakeDatabaseToolkit):
+    #     instructions = toolkit.instructions
+    # else:
+    #     instructions = ""
     prompt = SnowflakeChatAgent.create_prompt(
         tools,
-        toolkit_instructions=instructions,
-        prefix=prefix,
-        suffix=suffix,
+        # toolkit_instructions=instructions,
+        system_message_prefix=system_message_prefix,
+        system_message_suffix=system_message_suffix,
+        human_message=human_message,
         format_instructions=format_instructions,
         input_variables=input_variables,
-        system_template=system_template,
-        human_template=human_template,
+        # system_template=system_template,
+        # human_template=human_template,
         **prompt_kwargs,
     )
     # llm chain
@@ -246,8 +260,8 @@ def create_snowflake_agent(
     llm: BaseLLM,
     toolkit: SnowflakeDatabaseToolkit,
     callback_manager: Optional[BaseCallbackManager] = None,
-    prefix: str = SNOWFLAKE_PREFIX,
-    suffix: str = SNOWFLAKE_SUFFIX,
+    prefix: str = SNOWFLAKE_SYSTEM_MESSAGE_PREFIX,
+    suffix: str = SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX,
     format_instructions: str = FORMAT_INSTRUCTIONS,
     input_variables: Optional[List[str]] = None,
     top_k: int = 10,
