@@ -2,6 +2,7 @@
 
 agent:
   conversational_chat: false
+  # conversational_chat: true
   # conversational_chat mode might require GPT-4 to function properly
 
 database:
