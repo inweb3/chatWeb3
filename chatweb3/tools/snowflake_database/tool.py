@@ -390,10 +390,10 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
                         query, timeout_minutes=FLIPSIDE_QUERY_TIMEOUT
                     )
                     result_flipside = result_set.rows
-                    logger.debug(f"Flipside {i}th query {result_set.rows=}")
+                    logger.debug(f"Flipside query attempt {i+1}: {result_set.rows=}")
                     break
                 except Exception as e:
-                    result_flipside = [f"Flipside {i}th Query Error: {e}"]
+                    result_flipside = [f"Flipside query attempt {i+1} error: {e}"]
             return result_flipside
 
         if mode == "snowflake":

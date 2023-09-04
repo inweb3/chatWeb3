@@ -1,6 +1,8 @@
 """Base class for snowflake conversational chat agents."""
 from typing import Sequence, Optional, List, Any
-from chatweb3.agents.conversational_chat.output_parser import ChatWeb3ConvOutputParser
+from chatweb3.agents.conversational_chat.output_parser import (
+    ChatWeb3ChatConvoOutputParser,
+)
 from langchain.agents.agent import AgentOutputParser
 from langchain.prompts.base import BasePromptTemplate
 from langchain.prompts.chat import (
@@ -33,7 +35,7 @@ logger = get_logger(
 class SnowflakeConversationalChatAgent(ConversationalChatAgent):
     @classmethod
     def _get_default_output_parser(cls, **kwargs: Any) -> AgentOutputParser:
-        return ChatWeb3ConvOutputParser()
+        return ChatWeb3ChatConvoOutputParser()
 
     # @classmethod
     # def create_prompt(

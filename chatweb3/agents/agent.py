@@ -1,17 +1,42 @@
 from typing import Any, Dict, List, Optional, Tuple
 from langchain.agents.agent import AgentExecutor
-from langchain.schema import AgentAction, AgentFinish
+from langchain.schema import AgentAction, AgentFinish, OutputParserException
 from langchain.callbacks.manager import (
     CallbackManagerForChainRun,
     AsyncCallbackManagerForChainRun,
 )
 from langchain.utils.input import get_color_mapping
 from langchain.utilities.asyncio import asyncio_timeout
+from langchain.output_parsers import RetryWithErrorOutputParser
+from langchain.llms import OpenAI
 import time
 from openai.error import InvalidRequestError
+from config.config import agent_config
+
+import logging
+from config.logging_config import get_logger
+from chatweb3.agents.conversational_chat.output_parser import (
+    ChatWeb3ChatConvoOutputParser,
+)
+from chatweb3.agents.chat.output_parser import ChatWeb3ChatOutputParser
+
+logger = get_logger(
+    __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
+)
+
+# CONVERSATION_MODE = agent_config.get("agent.conversational_chat")
+
+# if CONVERSATION_MODE:
+#     parser = ChatWeb3ChatConvoOutputParser()
+# else:
+#     parser = ChatWeb3ChatOutputParser()
+
+# retry_parser = RetryWithErrorOutputParser.from_llm(
+#     parser=parser, llm=OpenAI(temperature=0)
+# )
 
 
-class chatWeb3AgentExecutor(AgentExecutor):
+class ChatWeb3AgentExecutor(AgentExecutor):
     def _call(
         self,
         inputs: Dict[str, str],
@@ -41,7 +66,7 @@ class chatWeb3AgentExecutor(AgentExecutor):
                 )
             except InvalidRequestError as e:
                 if "maximum context length" in str(e):
-                    output_str = "Unfortunately, this question requires many thought steps that exceeded the context window length supported by the current AI model. Please try a different question or switch to a model that supports a larger context window."
+                    output_str = "Unfortunately, this question requires many thought steps that exceeded the context window length supported by the current AI model. Please try a different question, or a model that supports a larger context window needs to be used."
                 else:
                     output_str = str(e)
                 next_step_output = AgentFinish(
@@ -50,11 +75,19 @@ class chatWeb3AgentExecutor(AgentExecutor):
                     },
                     log=f"Exception raised: {e}",
                 )
+            except OutputParserException as e:
+                output_str = "Unfortunately, the AI model does not produce the expected next step actions to continue the thought process. Please try a different question, or a more capable AI model needs to be used."
+                next_step_output = AgentFinish(
+                    return_values={"output": str(e)},
+                    log=f"{type(e).__name__} exception: {e}",
+                )
+                logger.error(f"{type(e).__name__} exception: {e}"),
             except Exception as e:
                 next_step_output = AgentFinish(
                     return_values={"output": str(e)},
-                    log=f"Exception raised: {e}",
+                    log=f"{type(e).__name__} exception: {e}",
                 )
+                logger.error(f"{type(e).__name__} exception: {e}"),
 
             if isinstance(next_step_output, AgentFinish):
                 return self._return(

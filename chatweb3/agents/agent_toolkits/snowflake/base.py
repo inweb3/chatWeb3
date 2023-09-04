@@ -20,7 +20,7 @@ from langchain.tools import BaseTool
 #     SNOWFLAKE_PREFIX,
 #     SNOWFLAKE_SUFFIX,
 # )
-from chatweb3.agents.agent import chatWeb3AgentExecutor
+from chatweb3.agents.agent import ChatWeb3AgentExecutor
 from chatweb3.agents.chat.prompt import (
     SNOWFLAKE_SYSTEM_MESSAGE_PREFIX,
     SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX,
@@ -38,6 +38,7 @@ from chatweb3.agents.agent_toolkits.snowflake.toolkit_custom import (
 )
 from chatweb3.agents.chat.base import SnowflakeChatAgent
 from chatweb3.agents.conversational_chat.base import SnowflakeConversationalChatAgent
+from chatweb3.agents.chat.output_parser import ChatWeb3ChatOutputParser
 
 import logging
 from config.logging_config import get_logger
@@ -80,7 +81,7 @@ def create_snowflake_conversational_chat_agent(
     llm_chain_kwargs: Optional[dict] = None,
     # **kwargs: Any,
     # ) -> AgentExecutor:
-) -> chatWeb3AgentExecutor:
+) -> ChatWeb3AgentExecutor:
     """
     Construct a sql chat agent from an LLM and tools.
     """
@@ -146,7 +147,7 @@ def create_snowflake_conversational_chat_agent(
     )
     # agent executor
     agent_executor_kwargs = agent_executor_kwargs or {}
-    return chatWeb3AgentExecutor.from_agent_and_tools(
+    return ChatWeb3AgentExecutor.from_agent_and_tools(
         agent=agent,
         tools=tools,
         max_iterations=max_iterations,
@@ -177,7 +178,7 @@ def create_snowflake_chat_agent(
     # system_template: Optional[str] = None,
     # human_template: Optional[str] = None,
     # for agent
-    output_parser: AgentOutputParser = ChatOutputParser(),
+    output_parser: AgentOutputParser = ChatWeb3ChatOutputParser(),
     # for agent executor
     max_iterations: Optional[int] = 10,
     max_execution_time: Optional[float] = 20,
@@ -195,7 +196,7 @@ def create_snowflake_chat_agent(
     llm_chain_kwargs: Optional[dict] = None,
     # **kwargs: Any,
     # ) -> AgentExecutor:
-) -> chatWeb3AgentExecutor:
+) -> ChatWeb3AgentExecutor:
     """
     Construct a sql chat agent from an LLM and tools.
     """
@@ -245,7 +246,7 @@ def create_snowflake_chat_agent(
     )
     # agent executor
     agent_executor_kwargs = agent_executor_kwargs or {}
-    return chatWeb3AgentExecutor.from_agent_and_tools(
+    return ChatWeb3AgentExecutor.from_agent_and_tools(
         agent=agent,
         tools=tools,
         max_iterations=max_iterations,
@@ -274,7 +275,7 @@ def create_snowflake_agent(
     verbose: bool = False,
     **kwargs: Any,
     # ) -> AgentExecutor:
-) -> chatWeb3AgentExecutor:
+) -> ChatWeb3AgentExecutor:
     return create_sql_agent(
         llm=llm,
         toolkit=toolkit,
@@ -304,7 +305,7 @@ def create_sql_chat_agent(
     input_variables: Optional[List[str]] = None,
     top_k: int = 10,
     # for agent
-    output_parser: AgentOutputParser = ChatOutputParser(),
+    output_parser: AgentOutputParser = ChatWeb3ChatOutputParser(),
     # for agent executor
     max_iterations: Optional[int] = 10,
     max_execution_time: Optional[float] = 20,
@@ -322,7 +323,7 @@ def create_sql_chat_agent(
     # llm_chain_kwargs: Optional[dict] = None,
     **kwargs: Any,
     # ) -> AgentExecutor:
-) -> chatWeb3AgentExecutor:
+) -> ChatWeb3AgentExecutor:
     """
     Construct a sql chat agent from an LLM and tools.
     """
@@ -348,7 +349,7 @@ def create_sql_chat_agent(
         allowed_tools=tool_names,
         output_parser=output_parser,
     )
-    return chatWeb3AgentExecutor.from_agent_and_tools(
+    return ChatWeb3AgentExecutor.from_agent_and_tools(
         agent=agent,
         tools=tools,
         max_iterations=max_iterations,

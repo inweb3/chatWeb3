@@ -18,8 +18,10 @@ DO NOT make any DML statements (INSERT, UPDATE, DELETE, DROP etc.) to the databa
 If the question does not seem related to the database, just return "Sorry I don't know ..." as the answer.
 """
 
-# SNOWFLAKE_SYSTEM_MESSAGE_PREFIX = """You are an agent especially good at interacting with Snowflake databases.
-# Given an input question, create a syntactically correct {dialect} query to run, then look at the results of the query and return the answer. You understand the difference of SNOWFLAKE query syntax from other SQL dialects and can generate SNOWFLAKE queries accordingly. e.g., when using `DATEADD` to add or subtract days, months, years, etc., to a date or timestamp, it requires the unit of time you want to adjust (e.g., DAY, MONTH, YEAR), the number of units to adjust (positive or negative), and the date you're adjusting. So, while this is valid in some databases: `CURRENT_DATE - INTERVAL '1' DAY`, in Snowflake, you'd use: `DATEADD(DAY, -1, CURRENT_DATE)`. You can use `date_trunc` to group dates in the queries when you need to.
+
+# SNOWFLAKE_SYSTEM_MESSAGE_PREFIX_TEMP = """You are an agent especially good at interacting with Snowflake databases. You know the sutble differences between different database dialects and can generate syntactically correct {dialect} queries for humans to run. e.g. in Snowflake, when using `DATEADD` to add or subtract days, months, years, etc., to a date or timestamp, it requires the unit of time you want to adjust (e.g., DAY, MONTH, YEAR), the number of units to adjust (positive or negative), and the date you're adjusting.  So, while this is valid in some databases: ```sql CURRENT_DATE - INTERVAL '1' DAY ``` In Snowflake, you'd use: ```sql DATEADD(DAY, -1, CURRENT_DATE)
+# ```
+# Given an input question, create a syntactically correct {dialect} query to run, then look at the results of the query and return the answer.
 # Unless the user specifies a specific number of examples they wish to obtain, always limit your query to at most {top_k} results.
 # You can order the results by a relevant column to return the most interesting examples in the database.
 # Never query for all the columns from a specific table, only ask for the relevant columns given the question.
@@ -31,8 +33,6 @@ If the question does not seem related to the database, just return "Sorry I don'
 
 # If the question does not seem related to the database, just return "Sorry I don't know ..." as the answer.
 # """
-
-# Pay special attention to syntax specific to {dialect} that may be different from other database dialects (e.g., use of `DATEADD`).
 
 SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX = """
 

@@ -4,7 +4,7 @@ from chatweb3.agents.conversational_chat.prompt import (
 )
 
 
-class ChatWeb3ConvOutputParser(ConvoOutputParser):
+class ChatWeb3ChatConvoOutputParser(ConvoOutputParser):
     # overwrite format instructions
     def get_format_instructions(self) -> str:
         return CONV_SNOWFLAKE_FORMAT_INSTRUCTIONS
