@@ -392,6 +392,15 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
                     result_flipside = result_set.rows
                     logger.debug(f"Flipside query attempt {i+1}: {result_set.rows=}")
                     break
+                except AttributeError as e:
+                    if "FLIPSIDE_API_KEY" in str(e):
+                        raise Exception(
+                            "Flipside query error. Please double check whether \
+                                your FLIPSIDE_API_KEY environmental variable \
+                                is set correctly."
+                        )
+                    else:
+                        result_flipside = [f"Flipside query attempt {i+1} error: {e}"]
                 except Exception as e:
                     result_flipside = [f"Flipside query attempt {i+1} error: {e}"]
             return result_flipside
