@@ -25,19 +25,31 @@ pytest-cov = ">=4.0.0"
 pytest-mock = ">=3.10.0"
 pytest-socket = ">=0.6.0"
 
+[tool.poetry.group.codespell.dependencies]
+codespell = "^2.2.0"
+
 [tool.poetry.group.lint.dependencies]
 ruff = ">=0.0.249"
 types-toml = ">=0.10.8.1"
 black = ">=23.1.0"
+isort = "^5.12.0"
 
 [tool.poetry.group.typing.dependencies]
 mypy = ">=0.991"
 types-pyyaml = ">=6.0.12.2"
 types-requests = ">=2.28.11.5"
 
-
 [tool.poetry.group.dev.dependencies]
 ipykernel = "^6.25.1"
+
+[tool.codespell]
+skip = '.git,*.pdf,*.svg,*.pdf,*.yaml,*.ipynb,poetry.lock,*.min.js,*.css,package-lock.json,example_data,_dist,examples'
+# Ignore latin etc
+ignore-regex = '.*(Stati Uniti|Tense=Pres).*'
+# whats is a typo but used frequently in queries so kept as is
+# aapply - async apply
+# unsecure - typo but part of API, decided to not bother for now
+ignore-words-list = 'momento,collison,ned,foor,reworkd,parth,whats,aapply,mysogyny,unsecure,damon,crate'
 
 [build-system]
 requires = ["poetry-core"]

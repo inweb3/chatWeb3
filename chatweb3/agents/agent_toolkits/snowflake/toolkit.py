@@ -1,20 +1,18 @@
 """Toolkit for interacting with Snowflake databases."""
 
-from typing import List, Optional, Union, cast
+from typing import List, Optional
 
 from langchain.agents.agent_toolkits import SQLDatabaseToolkit
-from langchain.callbacks.base import BaseCallbackManager
+from langchain.callbacks.base import Callbacks
 from langchain.chains.llm import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.chat_models.base import BaseChatModel
 from langchain.memory.readonly import ReadOnlySharedMemory
 from langchain.prompts.chat import (
-    BaseMessagePromptTemplate,
     ChatPromptTemplate,
     HumanMessagePromptTemplate,
     SystemMessagePromptTemplate,
 )
-from langchain.schema import BaseMessage
 from langchain.tools import BaseTool
 from pydantic import Field
 
@@ -40,8 +38,10 @@ class SnowflakeDatabaseToolkit(SQLDatabaseToolkit):
 
     def get_tools(
         self,
-        callback_manager: Optional[BaseCallbackManager] = None,
-        verbose: bool = False,
+        # callback_manager: Optional[BaseCallbackManager] = None,
+        # callbacks: Optional[List[BaseCallbackHandler]] = None,
+        callbacks: Optional[Callbacks] = None,
+        verbose: Optional[bool] = False,
         **kwargs,
     ) -> List[BaseTool]:
         """Get the tools available in the toolkit.
@@ -56,15 +56,17 @@ class SnowflakeDatabaseToolkit(SQLDatabaseToolkit):
             HumanMessagePromptTemplate.from_template(template="\n\n{query}"),
         ]
         input_variables = ["query", "dialect"]
+
+        verbose = False if verbose is None else verbose
+
         checker_llm_chain = LLMChain(
             llm=self.llm,
             prompt=ChatPromptTemplate(
                 input_variables=input_variables,
-                messages=cast(
-                    List[Union[BaseMessagePromptTemplate, BaseMessage]], messages
-                ),  # casting it for now XXX
+                messages=messages,  # type: ignore[arg-type]
             ),
-            callback_manager=callback_manager,
+            # callback_manager=callback_manager,
+            callbacks=callbacks,
             memory=self.readonly_shared_memory,
             verbose=verbose,
         )
@@ -78,7 +80,8 @@ class SnowflakeDatabaseToolkit(SQLDatabaseToolkit):
                 template=SNOWFLAKE_QUERY_CHECKER,
                 llm=self.llm,
                 llm_chain=checker_llm_chain,
-                callback_manager=callback_manager,
+                # callback_manager=callback_manager,
+                callbacks=callbacks,
                 verbose=verbose,
             ),  # type: ignore[call-arg]
         ]

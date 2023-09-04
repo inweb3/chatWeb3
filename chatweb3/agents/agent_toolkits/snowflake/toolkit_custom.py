@@ -1,20 +1,17 @@
-from typing import List, Optional, Union, cast
+from typing import List, Optional
 
-from langchain.callbacks.base import BaseCallbackManager
+from langchain.callbacks.base import Callbacks
 from langchain.chains.llm import LLMChain
 from langchain.prompts.chat import (
-    BaseMessagePromptTemplate,
     ChatPromptTemplate,
     HumanMessagePromptTemplate,
     SystemMessagePromptTemplate,
 )
-from langchain.schema import BaseMessage
 from langchain.tools import BaseTool
 from pydantic import Field
 
-from chatweb3.agents.agent_toolkits.snowflake.toolkit import (
-    SnowflakeDatabaseToolkit,
-)
+from chatweb3.agents.agent_toolkits.snowflake.toolkit import SnowflakeDatabaseToolkit
+from chatweb3.callbacks.logger_callback import LoggerCallbackHandler
 from chatweb3.tools.snowflake_database.prompt import (
     SNOWFLAKE_QUERY_CHECKER,
     TOOLKIT_INSTRUCTIONS,
@@ -26,11 +23,6 @@ from chatweb3.tools.snowflake_database.tool_custom import (
     QueryDatabaseTool,
 )
 from config.config import agent_config
-from loguru import logger
-
-from chatweb3.callbacks.logger_callback import LoggerCallbackHandler
-import os
-from langchain.callbacks.base import BaseCallbackHandler
 
 # logfile = os.path.join(os.path.dirname(__file__), "logs", "agent.log")
 # logger.add(logfile, colorize=True, enqueue=True)
@@ -46,8 +38,9 @@ class CustomSnowflakeDatabaseToolkit(SnowflakeDatabaseToolkit):
     def get_tools(
         self,
         # callback_manager: Optional[BaseCallbackManager] = None,
-        callbacks: Optional[List[BaseCallbackHandler]] = callbacks,
-        verbose: bool = False,
+        # callbacks: Optional[List[BaseCallbackHandler]] = callbacks,  # type: ignore[arg-type, assignment]
+        callbacks: Optional[Callbacks] = callbacks,  # type: ignore[assignment]
+        verbose: Optional[bool] = False,
         # input_variables: Optional[List[str]] = None,
         **kwargs,
     ) -> List[BaseTool]:
@@ -62,14 +55,14 @@ class CustomSnowflakeDatabaseToolkit(SnowflakeDatabaseToolkit):
             SystemMessagePromptTemplate.from_template(template=SNOWFLAKE_QUERY_CHECKER),
             HumanMessagePromptTemplate.from_template(template="\n\n{query}"),
         ]
+
+        verbose = False if verbose is None else verbose
+
         checker_llm_chain = LLMChain(
             llm=self.llm,
             prompt=ChatPromptTemplate(
                 input_variables=input_variables,
-                messages=cast(
-                    List[Union[BaseMessagePromptTemplate, BaseMessage]], messages
-                ),
-                # messages=messages
+                messages=messages,  # type: ignore[arg-type]
             ),
             # callback_manager=callback_manager,
             callbacks=callbacks,

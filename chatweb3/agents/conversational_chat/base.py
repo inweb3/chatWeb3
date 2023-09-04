@@ -1,30 +1,18 @@
 """Base class for snowflake conversational chat agents."""
-from typing import Sequence, Optional, List, Any
+import logging
+from typing import Any
+
+from langchain.agents.agent import AgentOutputParser
+from langchain.agents.conversational_chat.base import ConversationalChatAgent
+
 from chatweb3.agents.conversational_chat.output_parser import (
     ChatWeb3ChatConvoOutputParser,
 )
-from langchain.agents.agent import AgentOutputParser
-from langchain.prompts.base import BasePromptTemplate
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    HumanMessagePromptTemplate,
-    MessagesPlaceholder,
-    SystemMessagePromptTemplate,
-)
-from langchain.tools import BaseTool
-
 
 # from chatweb3.agents.agent_toolkits.snowflake.prompt import (
 #     CONV_SNOWFLAKE_PREFIX,
 #     CONV_SNOWFLAKE_SUFFIX,
 # )
-from chatweb3.agents.conversational_chat.prompt import (
-    CONV_SNOWFLAKE_PREFIX,
-    CONV_SNOWFLAKE_SUFFIX,
-)
-from langchain.agents.conversational_chat.base import ConversationalChatAgent
-from langchain.schema import BaseOutputParser
-import logging
 from config.logging_config import get_logger
 
 logger = get_logger(

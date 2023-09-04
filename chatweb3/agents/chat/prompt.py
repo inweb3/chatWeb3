@@ -1,8 +1,6 @@
 # flake8: noqa
 
-from chatweb3.tools.snowflake_database.prompt import (
-    TOOLKIT_INSTRUCTIONS,
-)
+from chatweb3.tools.snowflake_database.prompt import TOOLKIT_INSTRUCTIONS
 
 SNOWFLAKE_SYSTEM_MESSAGE_PREFIX = """You are an agent especially good at interacting with Snowflake databases.
 Given an input question, create a syntactically correct {dialect} query to run, then look at the results of the query and return the answer.

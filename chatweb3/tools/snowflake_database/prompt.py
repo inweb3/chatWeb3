@@ -47,10 +47,10 @@ make sure these and similar errors are corrected and make sure the query works s
 If there are any of the above mistakes, rewrite the query. If there are no mistakes, just reproduce the original query. Make sure your response is concise, only include the query and nothing else."""
 # flake8: noqa
 from chatweb3.tools.snowflake_database.tool_custom import (
-    CHECK_TABLE_SUMMARY_TOOL_NAME,
-    CHECK_TABLE_METADATA_TOOL_NAME,
-    QUERY_DATABASE_TOOL_NAME,
     CHECK_QUERY_SYNTAX_TOOL_NAME,
+    CHECK_TABLE_METADATA_TOOL_NAME,
+    CHECK_TABLE_SUMMARY_TOOL_NAME,
+    QUERY_DATABASE_TOOL_NAME,
 )
 
 # TOOLKIT_INSTRUCTIONS = f"""

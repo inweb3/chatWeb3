@@ -5,10 +5,7 @@ import re
 from collections import defaultdict
 from typing import Dict, List, Optional
 
-from chatweb3.utils import (
-    parse_table_long_name,
-    parse_table_long_name_to_json_list,
-)
+from chatweb3.utils import parse_table_long_name, parse_table_long_name_to_json_list
 from config.logging_config import get_logger
 
 logger = get_logger(

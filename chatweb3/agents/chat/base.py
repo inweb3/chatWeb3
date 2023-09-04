@@ -1,28 +1,11 @@
 """Base class for snowflake chat agents."""
-from typing import List, Optional, Sequence, Union, cast
 
 from langchain.agents.chat.base import ChatAgent
-from langchain.agents.chat.prompt import FORMAT_INSTRUCTIONS
-from langchain.prompts.base import BasePromptTemplate
-from langchain.prompts.chat import (
-    BaseMessagePromptTemplate,
-    ChatPromptTemplate,
-    HumanMessagePromptTemplate,
-    SystemMessagePromptTemplate,
-)
-from langchain.schema import BaseMessage
-from langchain.tools import BaseTool
 
 # from chatweb3.agents.agent_toolkits.snowflake.prompt import (
 #     SNOWFLAKE_PREFIX,
 #     SNOWFLAKE_SUFFIX,
 # )
-from chatweb3.agents.chat.prompt import (
-    SNOWFLAKE_SYSTEM_MESSAGE_PREFIX,
-    SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS,
-    SNOWFLAKE_HUMAN_MESSAGE,
-    SNOWFLAKE_FORMAT_INSTRUCTIONS,
-)
 
 
 class SnowflakeChatAgent(ChatAgent):

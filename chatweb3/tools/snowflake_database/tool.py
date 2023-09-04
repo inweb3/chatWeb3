@@ -1,9 +1,8 @@
 import json
 import logging
 import re
-from typing import Any, Dict, List, Optional, Union, cast
+from typing import Any, Dict, List, Optional, Union
 
-from flipside import Flipside
 from langchain.base_language import BaseLanguageModel
 from langchain.callbacks.manager import (
     AsyncCallbackManagerForToolRun,
@@ -12,6 +11,7 @@ from langchain.callbacks.manager import (
 from langchain.chains.llm import LLMChain
 from langchain.chat_models.base import BaseChatModel
 from langchain.prompts.chat import (
+    BaseChatPromptTemplate,
     BaseMessagePromptTemplate,
     ChatPromptTemplate,
     HumanMessagePromptTemplate,
@@ -383,7 +383,7 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
 
         if mode == "flipside":
             logger.debug(f"{mode=}, flipside {query=}")
-            result_flipside: List[Any] = None
+            result_flipside: List[Any] = []
             for i in range(FLIPSIDE_QUERY_MAX_RETRIES):
                 try:
                     result_set = self.db.flipside.query(
@@ -416,8 +416,8 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
                 logger.debug(f"{mode=}, flipside {query=}")
                 result_set = self.db.flipside.query(query)
                 logger.debug(f"flipside {result_set.rows=}")
-                result_flipside: List[Any] = result_set.rows
-                return result_flipside
+                result_flipside_default: List[Any] = result_set.rows
+                return result_flipside_default
                 # logger.debug(f"{mode=}, shroomdk {query=}")
                 # result_set = self.db.shroomdk.query(query)
                 # logger.debug(
@@ -465,9 +465,12 @@ class SnowflakeQueryCheckerTool(QuerySQLCheckerTool):
                 HumanMessagePromptTemplate.from_template(template="\n\n{query}"),
             ]
             assert isinstance(messages, list) and all(
-                isinstance(item, (BaseMessagePromptTemplate, BaseMessage))
+                isinstance(
+                    item,
+                    (BaseMessagePromptTemplate, BaseMessage, BaseChatPromptTemplate),
+                )
                 for item in messages
-            ), "Expected a list of BaseMessagePromptTemplate or BaseMessage"
+            ), "Expected a list of BaseMessagePromptTemplate or BaseMessage or BaseChatPromptTemplate"
 
             llm = values.get("llm")
             assert isinstance(llm, BaseLanguageModel)
@@ -475,9 +478,7 @@ class SnowflakeQueryCheckerTool(QuerySQLCheckerTool):
                 llm=llm,
                 prompt=ChatPromptTemplate(
                     input_variables=input_variables,
-                    messages=cast(
-                        List[Union[BaseMessagePromptTemplate, BaseMessage]], messages
-                    ),  # casting it for now
+                    messages=messages,  # type: ignore[arg-type]
                 ),
             )
 

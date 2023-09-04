@@ -16,15 +16,11 @@ from config.config import agent_config
 from config.logging_config import get_logger
 from create_agent import create_agent_executor
 
-
 logger = get_logger(
     __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
 )
 
 load_dotenv()
-
-# CONVERSATION_MODE = False
-# CONVERSATION_MODE = True # require gpt-4 to work well
 
 CONVERSATION_MODE = agent_config.get("agent.conversational_chat")
 
@@ -46,105 +42,6 @@ def set_openai_api_key(api_key, agent):
         agent_executor = create_agent_executor(conversation_mode=CONVERSATION_MODE)
         os.environ["OPENAI_API_KEY"] = ""
         return agent_executor
-
-
-# def format_response(response: dict) -> str:
-#     """
-#     Formats the response dictionary into a readable string.
-
-#     Parameters:
-#     response (dict): The response dictionary
-
-#     Returns:
-#     formatted_output (str): The formatted output string
-#     """
-#     logger.debug(f"response: {response}")
-
-#     if CONVERSATION_MODE:
-#         chat_history = response["chat_history"]
-#         intermediate_steps = response["intermediate_steps"]
-
-#         formatted_steps = []
-#         for i, step in enumerate(intermediate_steps, start=1):
-#             agent_action, text = step
-#             text = re.sub(r"`|\\", "", str(text))  # remove problematic characters
-#             text = text.strip().replace("\n", "\n  ")
-#             formatted_steps.append(
-#                 f"*Action*: {agent_action.tool}\n\n*Observation*: {text}"
-#             )
-
-#         chat_messages = "\n\n".join(
-#             [f"**{msg.__class__.__name__}**: {msg.content}" for msg in chat_history]
-#         )
-#         separator = "\n\n"
-#         formatted_steps_str = separator.join(formatted_steps)
-#         formatted_output = f"{chat_messages}{separator}{formatted_steps_str}"
-
-#         # formatted_output = f"{chat_messages}\n\n{'\n\n'.join(formatted_steps)}"
-
-#     else:
-#         output = response["output"]
-#         intermediate_steps = response["intermediate_steps"]
-#         logger.debug(f"intermediate_steps: {intermediate_steps}")
-
-#         formatted_steps = []
-#         for i, step in enumerate(intermediate_steps, start=1):
-#             agent_action, text = step
-#             text = re.sub(r"`|\\", "", str(text))  # remove problematic characters
-#             text = text.strip().replace("\n", "\n  ")
-#             log = agent_action.log
-#             thought, action = log.strip().split("\nAction:")
-#             thought = thought.replace("Thought: ", "") if i == 1 else thought
-#             formatted_steps.append(
-#                 f"**Thought {i}**: {thought}\n\n*Action:*\n\n\tTool: {agent_action.tool}"
-#                 f"\n\n\tTool input: {agent_action.tool_input}\n\n*Observation:*\n\n{text}"
-#             )
-
-#         formatted_output = "\n\n".join(formatted_steps)
-#         formatted_output += f"\n\n**Final answer**: {output}"
-
-#     return formatted_output
-
-
-# def clean_text(text):
-#     text = re.sub(r"`|\\", "", str(text))  # remove problematic characters
-#     return text.strip().replace("\n", "\n  ")
-
-
-# def format_response(response: dict) -> str:
-#     logger.debug(f"response: {response}")
-
-#     formatted_steps = []
-#     for i, step in enumerate(response["intermediate_steps"], start=1):
-#         agent_action, text = step
-#         text = clean_text(text)
-#         if CONVERSATION_MODE:
-#             formatted_steps.append(
-#                 f"*Action*: {agent_action.tool}\n\n*Observation*: {text}"
-#             )
-#         else:
-#             log = agent_action.log
-#             thought, action = log.strip().split("\nAction:")
-#             thought = thought.replace("Thought: ", "") if i == 1 else thought
-#             formatted_steps.append(
-#                 f"**Thought {i}**: {thought}\n\n*Action:*\n\nTool: {agent_action.tool}"
-#                 f"\n\nTool input: {agent_action.tool_input}\n\n*Observation:*\n\n{text}"
-#             )
-
-#     formatted_output = "\n\n".join(formatted_steps)
-
-#     if CONVERSATION_MODE:
-#         chat_messages = "\n\n".join(
-#             [
-#                 f"**{msg.__class__.__name__}**: {msg.content}"
-#                 for msg in response["chat_history"]
-#             ]
-#         )
-#         formatted_output = f"{chat_messages}\n\n{formatted_output}"
-#     else:
-#         formatted_output += f"\n\n**Final answer**: {response['output']}"
-
-#     return formatted_output
 
 
 def clean_text(text):
@@ -222,24 +119,14 @@ def chat(inp, history, agent):
                 history.append((inp, answer))
             except Exception as e:
                 logger.error(
-                    f"Exception raised from parsing {response=}: {e}, {type(e).__name__=}"
+                    f"{type(e).__name__=} exception from parsing {response=}: {e}"
                 ),
                 thought_process_text = f"Exception in parsing response: {e}"
                 history.append((inp, thought_process_text))
         except Exception as e:
-            logger.error(
-                f"Exception raised from receiving `response = agent(inp)`: {e}, {type(e).__name__=}"
-            ),
+            logger.error(f"{type(e).__name__} exception from receiving response: {e}"),
             thought_process_text = f"Exception in receiving response: {e}"
             history.append((inp, thought_process_text))
-
-    # Debugging: log the types and values of the returned variables
-    # logger.debug(
-    #     f"Returning from chat(): history type: {type(history)}, history value: {history}"
-    # )
-    # logger.debug(
-    #     f"Returning from chat(): thought_process_text type: {type(thought_process_text)}, thought_process_text value: {thought_process_text}"
-    # )
 
     return history, history, thought_process_text
 
@@ -324,38 +211,3 @@ with block:
 
 if __name__ == "__main__":
     block.launch(debug=True)
-
-# def split_text(text, max_line_length=80):
-#     """Split text into multiple lines of a maximum length."""
-#     if text is None:
-#         return ""
-#     text = str(text)
-#     lines = []
-#     for i in range(0, len(text), max_line_length):
-#         # lines.append(text[i : i + max_line_length])
-#         line = text[i: i + max_line_length]
-#         lines.append('\t' + line)
-#     return "\n".join(lines)
-# def split_thought_process_text(text: str):
-#     """
-#     Splits the thought process text into sections.
-
-#     Parameters:
-#     text (str): The thought process text
-
-#     Returns:
-#     sections: The sections of the thought process
-#     final_answer: The final answer from the thought process
-#     """
-#     thoughts = text.split("_Thought")
-#     sections = []
-#     for t in thoughts[1:]:
-#         t = t.split("_Final answer")[0]
-#         thought, action, observation = (
-#             t.split("\n\nAction:\n\tTool:")[0],
-#             "Tool:" + t.split("Tool:")[1].split("\n\nObservation:\n\t")[0],
-#             t.split("Observation:\n\t")[1],
-#         )
-#         sections.append((thought, action, observation))
-#     final_answer = text.split("_Final answer_: ")[1]
-#     return sections, final_answer

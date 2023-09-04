@@ -4,9 +4,7 @@ This file contains the custom tools for the snowflake_database toolkit.
 """
 from typing import Any, List, Optional, Union
 
-from langchain.callbacks.manager import (
-    CallbackManagerForToolRun,
-)
+from langchain.callbacks.manager import CallbackManagerForToolRun
 
 from chatweb3.tools.snowflake_database.tool import (
     GetSnowflakeDatabaseTableMetadataTool,
@@ -45,7 +43,7 @@ class CheckTableSummaryTool(ListSnowflakeDatabaseTableNamesTool):
         run_manager: Optional[CallbackManagerForToolRun] = None,
         mode: str = CHECK_TABLE_SUMMARY_TOOL_MODE,
     ) -> str:
-        return super()._run(tool_input=tool_input, mode=mode)
+        return super()._run(tool_input=tool_input, run_manager=run_manager, mode=mode)
 
 
 class CheckTableMetadataTool(GetSnowflakeDatabaseTableMetadataTool):

@@ -3,15 +3,10 @@ test_chat.py
 This file contains the tests for the main chat module.
 """
 import os
-import pytest
 from unittest.mock import Mock
 
-from chat_ui import (
-    chat,
-    format_response,
-    set_openai_api_key,
-    #    split_thought_process_text,
-)
+from chat_ui import format_response  # split_thought_process_text,
+from chat_ui import chat, set_openai_api_key
 
 # from chatweb3.chat_ui import CONVERSATION_MODE
 from config.config import agent_config
