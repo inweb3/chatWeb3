@@ -1,24 +1,32 @@
-from typing import Any, Dict, List, Optional, Tuple
-from langchain.agents.agent import AgentExecutor
-from langchain.schema import AgentAction, AgentFinish, OutputParserException
-from langchain.callbacks.manager import (
-    CallbackManagerForChainRun,
-    AsyncCallbackManagerForChainRun,
-)
-from langchain.utils.input import get_color_mapping
-from langchain.utilities.asyncio import asyncio_timeout
-from langchain.output_parsers import RetryWithErrorOutputParser
-from langchain.llms import OpenAI
-import time
-from openai.error import InvalidRequestError
-from config.config import agent_config
-
 import logging
-from config.logging_config import get_logger
-from chatweb3.agents.conversational_chat.output_parser import (
-    ChatWeb3ChatConvoOutputParser,
+import time
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
+
+from langchain.agents.agent import (
+    AgentExecutor,
+    BaseMultiActionAgent,
+    BaseSingleActionAgent,
 )
-from chatweb3.agents.chat.output_parser import ChatWeb3ChatOutputParser
+from langchain.callbacks.manager import (
+    AsyncCallbackManagerForChainRun,
+    CallbackManagerForChainRun,
+    Callbacks,
+)
+
+# from langchain.llms import OpenAI
+# from langchain.output_parsers import RetryWithErrorOutputParser
+from langchain.schema import AgentAction, AgentFinish, OutputParserException
+from langchain.tools.base import BaseTool
+from langchain.utilities.asyncio import asyncio_timeout
+from langchain.utils.input import get_color_mapping
+from openai.error import InvalidRequestError
+
+# from chatweb3.agents.chat.output_parser import ChatWeb3ChatOutputParser
+# from chatweb3.agents.conversational_chat.output_parser import (
+#    ChatWeb3ChatConvoOutputParser,
+# )
+# from config.config import agent_config
+from config.logging_config import get_logger
 
 logger = get_logger(
     __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
@@ -37,6 +45,22 @@ logger = get_logger(
 
 
 class ChatWeb3AgentExecutor(AgentExecutor):
+    @classmethod
+    def from_agent_and_tools(
+        cls,
+        agent: Union[BaseSingleActionAgent, BaseMultiActionAgent],
+        tools: Sequence[BaseTool],
+        callbacks: Optional[Callbacks] = None,
+        **kwargs: Any,
+    ) -> "ChatWeb3AgentExecutor":
+        """Create from agent and tools."""
+        return cls(
+            agent=agent,
+            tools=tools,
+            callbacks=callbacks,
+            **kwargs,
+        )
+
     def _call(
         self,
         inputs: Dict[str, str],

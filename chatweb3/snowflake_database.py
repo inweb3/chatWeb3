@@ -1,6 +1,6 @@
 # %%
 import logging
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 from flipside import Flipside
 from langchain.sql_database import SQLDatabase
@@ -77,7 +77,8 @@ class SnowflakeDatabase(SQLDatabase):
             if cursor.returns_rows:
                 if return_string:
                     if fetch == "all":
-                        result_all: List[Row] = cursor.fetchall()
+                        # result_all: List[Row] = cursor.fetchall()
+                        result_all: Sequence[Row[Any]] = cursor.fetchall()
                         return str(result_all)
                     elif fetch == "one":
                         fetched = cursor.fetchone()
@@ -219,13 +220,13 @@ class SnowflakeContainer:
             )
         return self._flipside
 
-    # @property
-    # def shroomdk(self):
-    #     if self._shroomdk is None:
-    #         raise AttributeError(
-    #             "Shroomdk attribute is not found in the SnowflakeContainer; please double check whether your SHROOMDK_API_KEY is set correctly in the .env file"
-    #         )
-    #     return self._shroomdk
+    @property
+    def shroomdk(self):
+        if self._shroomdk is None:
+            raise AttributeError(
+                "Shroomdk attribute is not found in the SnowflakeContainer; please double check whether your SHROOMDK_API_KEY is set correctly in the .env file"
+            )
+        return self._shroomdk
 
     def _create_engine(self, database: str) -> Engine:
         """Create a Snowflake engine with the given database

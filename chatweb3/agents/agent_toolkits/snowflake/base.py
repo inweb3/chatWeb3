@@ -1,15 +1,16 @@
 """Snowflake agent that uses a Chat model"""
+import logging
 from typing import Any, List, Optional, Sequence
 
-from langchain.agents.agent import AgentOutputParser
+from langchain.agents.agent import AgentExecutor, AgentOutputParser
 from langchain.agents.agent_toolkits.sql.base import create_sql_agent
 from langchain.agents.agent_toolkits.sql.prompt import SQL_PREFIX, SQL_SUFFIX
 from langchain.agents.agent_toolkits.sql.toolkit import SQLDatabaseToolkit
 from langchain.agents.chat.base import ChatAgent
-from langchain.agents.chat.output_parser import ChatOutputParser
 
+# from langchain.agents.chat.output_parser import ChatOutputParser
 from langchain.agents.chat.prompt import FORMAT_INSTRUCTIONS
-from langchain.callbacks.base import BaseCallbackManager
+from langchain.callbacks.base import Callbacks
 from langchain.chains.llm import LLMChain
 from langchain.chat_models.base import BaseChatModel
 from langchain.llms.base import BaseLLM
@@ -21,26 +22,21 @@ from langchain.tools import BaseTool
 #     SNOWFLAKE_SUFFIX,
 # )
 from chatweb3.agents.agent import ChatWeb3AgentExecutor
+from chatweb3.agents.agent_toolkits.snowflake.toolkit import SnowflakeDatabaseToolkit
+from chatweb3.agents.chat.base import SnowflakeChatAgent
+from chatweb3.agents.chat.output_parser import ChatWeb3ChatOutputParser
 from chatweb3.agents.chat.prompt import (
+    SNOWFLAKE_FORMAT_INSTRUCTIONS,
+    SNOWFLAKE_HUMAN_MESSAGE,
     SNOWFLAKE_SYSTEM_MESSAGE_PREFIX,
     SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX,
     SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS,
-    SNOWFLAKE_HUMAN_MESSAGE,
-    SNOWFLAKE_FORMAT_INSTRUCTIONS,
 )
+from chatweb3.agents.conversational_chat.base import SnowflakeConversationalChatAgent
 from chatweb3.agents.conversational_chat.prompt import (
     CONV_SNOWFLAKE_PREFIX,
     CONV_SNOWFLAKE_SUFFIX,
 )
-from chatweb3.agents.agent_toolkits.snowflake.toolkit import SnowflakeDatabaseToolkit
-from chatweb3.agents.agent_toolkits.snowflake.toolkit_custom import (
-    CustomSnowflakeDatabaseToolkit,
-)
-from chatweb3.agents.chat.base import SnowflakeChatAgent
-from chatweb3.agents.conversational_chat.base import SnowflakeConversationalChatAgent
-from chatweb3.agents.chat.output_parser import ChatWeb3ChatOutputParser
-
-import logging
 from config.logging_config import get_logger
 
 logger = get_logger(
@@ -70,7 +66,8 @@ def create_snowflake_conversational_chat_agent(
     early_stopping_method: Optional[str] = "force",
     return_intermediate_steps: Optional[bool] = False,
     # for chains
-    callbacks: Optional[BaseCallbackManager] = None,
+    # callbacks: Optional[List[BaseCallbackHandler]] = None,
+    callbacks: Optional[Callbacks] = None,
     verbose: Optional[bool] = False,
     memory: Optional[BaseMemory] = None,
     # additional kwargs
@@ -127,6 +124,7 @@ def create_snowflake_conversational_chat_agent(
     )
     # llm chain
     llm_chain_kwargs = llm_chain_kwargs or {}
+    verbose = False if verbose is None else verbose
     llm_chain = LLMChain(
         llm=llm,
         prompt=prompt,
@@ -167,11 +165,9 @@ def create_snowflake_chat_agent(
     # for llm chain of agent
     llm: BaseChatModel,
     # for prompt of llm chain
-    system_message_prefix: Optional[str] = SNOWFLAKE_SYSTEM_MESSAGE_PREFIX,
-    system_message_suffix: Optional[
-        str
-    ] = SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS,
-    human_message: Optional[str] = SNOWFLAKE_HUMAN_MESSAGE,
+    system_message_prefix: str = SNOWFLAKE_SYSTEM_MESSAGE_PREFIX,
+    system_message_suffix: str = SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX_WITH_TOOLKIT_INSTRUCTIONS,
+    human_message: str = SNOWFLAKE_HUMAN_MESSAGE,
     format_instructions: str = SNOWFLAKE_FORMAT_INSTRUCTIONS,
     input_variables: Optional[List[str]] = None,
     top_k: int = 10,
@@ -185,8 +181,9 @@ def create_snowflake_chat_agent(
     early_stopping_method: Optional[str] = "force",
     return_intermediate_steps: Optional[bool] = False,
     # for chains
-    callbacks: Optional[BaseCallbackManager] = None,
-    verbose: bool = False,
+    # callbacks: Optional[List[BaseCallbackHandler]] = None,
+    callbacks: Optional[Callbacks] = None,
+    verbose: Optional[bool] = False,
     memory: Optional[BaseMemory] = None,
     # additional kwargs
     toolkit_kwargs: Optional[dict] = None,
@@ -226,6 +223,7 @@ def create_snowflake_chat_agent(
     )
     # llm chain
     llm_chain_kwargs = llm_chain_kwargs or {}
+    verbose = False if verbose is None else verbose
     llm_chain = LLMChain(
         llm=llm,
         prompt=prompt,
@@ -263,7 +261,8 @@ def create_snowflake_chat_agent(
 def create_snowflake_agent(
     llm: BaseLLM,
     toolkit: SnowflakeDatabaseToolkit,
-    callback_manager: Optional[BaseCallbackManager] = None,
+    # callbacks: Optional[List[BaseCallbackHandler]] = None,
+    callbacks: Optional[Callbacks] = None,
     prefix: str = SNOWFLAKE_SYSTEM_MESSAGE_PREFIX,
     suffix: str = SNOWFLAKE_SYSTEM_MESSAGE_SUFFIX,
     format_instructions: str = FORMAT_INSTRUCTIONS,
@@ -274,12 +273,12 @@ def create_snowflake_agent(
     early_stopping_method: str = "force",
     verbose: bool = False,
     **kwargs: Any,
-    # ) -> AgentExecutor:
-) -> ChatWeb3AgentExecutor:
+) -> AgentExecutor:
+    # ) -> ChatWeb3AgentExecutor:
     return create_sql_agent(
         llm=llm,
         toolkit=toolkit,
-        callback_manager=callback_manager,
+        callbacks=callbacks,
         prefix=prefix,
         suffix=suffix,
         format_instructions=format_instructions,
@@ -312,8 +311,9 @@ def create_sql_chat_agent(
     early_stopping_method: Optional[str] = "force",
     return_intermeidate_steps: Optional[bool] = False,
     # for chains
-    callback_manager: Optional[BaseCallbackManager] = None,
-    verbose: bool = False,
+    # callbacks: Optional[List[BaseCallbackHandler]] = None,
+    callbacks: Optional[Callbacks] = None,
+    verbose: Optional[bool] = False,
     # memory: Optional[BaseMemory] = None,
     # additional kwargs
     # toolkit_kwargs: Optional[dict] = None,
@@ -322,8 +322,8 @@ def create_sql_chat_agent(
     # agent_kwargs: Optional[dict] = None,
     # llm_chain_kwargs: Optional[dict] = None,
     **kwargs: Any,
-    # ) -> AgentExecutor:
-) -> ChatWeb3AgentExecutor:
+) -> AgentExecutor:
+    # ) -> ChatWeb3AgentExecutor:
     """
     Construct a sql chat agent from an LLM and tools.
     """
@@ -331,16 +331,17 @@ def create_sql_chat_agent(
     prefix = prefix.format(dialect=toolkit.dialect, top_k=top_k)
     prompt = ChatAgent.create_prompt(
         tools,
-        prefix=prefix,
-        suffix=suffix,
+        system_message_prefix=prefix,
+        system_message_suffix=suffix,
         format_instructions=format_instructions,
         input_variables=input_variables,
         #    **prompt_kwargs,
     )
+    verbose = False if verbose is None else verbose
     llm_chain = LLMChain(
         llm=llm,
         prompt=prompt,
-        callback_manager=callback_manager,
+        callbacks=callbacks,
         verbose=verbose,
     )
     tool_names = [tool.name for tool in tools]
@@ -356,6 +357,6 @@ def create_sql_chat_agent(
         max_execution_time=max_execution_time,
         early_stopping_method=early_stopping_method,
         return_intermeidate_steps=return_intermeidate_steps,
-        callback_manager=callback_manager,
+        callbacks=callbacks,
         verbose=verbose,
     )
