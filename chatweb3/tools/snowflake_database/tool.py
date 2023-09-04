@@ -33,6 +33,13 @@ from chatweb3.utils import parse_table_long_name_to_json_list  # parse_str_to_di
 from config.config import agent_config
 from config.logging_config import get_logger
 
+# from flipside.errors import (
+#     QueryRunCancelledError,
+#     QueryRunExecutionError,
+#     QueryRunTimeoutError,
+#     SDKError,
+# )
+
 logger = get_logger(
     __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
 )
@@ -46,6 +53,9 @@ SELECT_SNOWFLAKE_DATABASE_SCHEMA_TOOL_NAME = "select_snowflake_db_schema"
 
 DEFAULT_DATABASE = agent_config.get("database.default_database")
 DEFAULT_SCHEMA = agent_config.get("database.default_schema")
+
+FLIPSIDE_QUERY_TIMEOUT = agent_config.get("flipside.query_timeout")
+FLIPSIDE_QUERY_MAX_RETRIES = agent_config.get("flipside.query_max_retries")
 
 
 class ListSnowflakeDatabaseTableNamesToolInput(BaseToolInput):
@@ -373,9 +383,17 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
 
         if mode == "flipside":
             logger.debug(f"{mode=}, flipside {query=}")
-            result_set = self.db.flipside.query(query)
-            logger.debug(f"flipside {result_set.rows=}")
-            result_flipside: List[Any] = result_set.rows
+            result_flipside: List[Any] = None
+            for i in range(FLIPSIDE_QUERY_MAX_RETRIES):
+                try:
+                    result_set = self.db.flipside.query(
+                        query, timeout_minutes=FLIPSIDE_QUERY_TIMEOUT
+                    )
+                    result_flipside = result_set.rows
+                    logger.debug(f"Flipside query attempt {i+1}: {result_set.rows=}")
+                    break
+                except Exception as e:
+                    result_flipside = [f"Flipside query attempt {i+1} error: {e}"]
             return result_flipside
 
         if mode == "snowflake":

@@ -2,7 +2,8 @@
 
 agent:
   conversational_chat: false
-  # conversational_chat mode might require GPT-4 to function properly
+  # conversational_chat: true
+  # Note: recommend GPT-4 to use conversational_chat mode
 
 database:
   default_database: ethereum
@@ -19,6 +20,9 @@ tool:
   # query_database_tool_mode: shroomdk
   query_database_tool_mode: flipside
 
+flipside:
+  query_timeout: 5
+  query_max_retries: 1
 # agent_chain:
 #  agent_executor_return_intermedidate_steps: false
 

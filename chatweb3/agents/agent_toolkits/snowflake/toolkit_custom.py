@@ -28,14 +28,12 @@ from chatweb3.tools.snowflake_database.tool_custom import (
 from config.config import agent_config
 from loguru import logger
 
-# from langchain.callbacks import FileCallbackHandler
 from chatweb3.callbacks.logger_callback import LoggerCallbackHandler
 import os
 from langchain.callbacks.base import BaseCallbackHandler
 
-logfile = os.path.join(os.path.dirname(__file__), "logs", "agent.log")
-logger.add(logfile, colorize=True, enqueue=True)
-# file_callback_handler = FileCallbackHandler(logfile)
+# logfile = os.path.join(os.path.dirname(__file__), "logs", "agent.log")
+# logger.add(logfile, colorize=True, enqueue=True)
 log_callback_handler = LoggerCallbackHandler()
 callbacks = [log_callback_handler]
 
