@@ -4,10 +4,6 @@ More details about this application prototype is available at:
 
 **[Can ChatGPT unlock blockchain data for the masses? Early insights from building ChatWeb3](https://www.inweb3.com/chatcrypto-chatgpt-for-blockchain-data/)**
 
-## Package dependency
-
-Use `poetry install` to install dependencies.
-
 ## Required API keys
 
 ### Flipsidecrypto database
@@ -22,10 +18,25 @@ FLIPSIDE_API_KEY="XXX"
 
 You will need to provide your OpenAI API key to use this application. An OpenAI API key can be obtained from [Openai](https://platform.openai.com/account/api-keys). 
 
+## Installation
+
+```
+git clone https://github.com/inWeb3ai/chatWeb3.git
+cd chatWeb3
+poetry shell
+poetry install
+```
+
 ## Run the application
 
 ```
-python chat_ui.py 
+poetry run chatWeb3-gradio  # run as gradio app
+```
+
+or
+
+```
+poetry run chatWeb3-fastapi  # run as fastapi server
 ```
 
 ## Test

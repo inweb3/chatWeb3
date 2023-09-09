@@ -46,8 +46,8 @@ types-requests = ">=2.28.11.5"
 ipykernel = "^6.25.1"
 
 [tool.poetry.scripts]
-fastapi = "api.main:start"
-gradio = "api.gradio.gradio_ui:start"
+chatWeb3-fastapi = "api.main:start"
+chatWeb3-gradio = "api.gradio.gradio_runner:run_gradio"
 
 [tool.codespell]
 skip = '.git,*.pdf,*.svg,*.pdf,*.yaml,*.ipynb,poetry.lock,*.min.js,*.css,package-lock.json,example_data,_dist,examples'
