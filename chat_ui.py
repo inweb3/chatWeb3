@@ -102,6 +102,13 @@ def chat(inp, history, agent):
     history: The updated chat history
     thought_process_text: The formatted thought process text
     """
+
+    # add code to check whether the FLIPSIDE_API_KEY is set,
+    # if not, then raise an error message
+    if not os.environ.get("FLIPSIDE_API_KEY"):
+        raise Exception("FLIPSIDE_API_KEY is not set, \
+                        please set it in .env file or in the environment variable")
+
     history = history or []
     if agent is None:
         history.append((inp, "Please paste your OpenAI API Key to use"))
