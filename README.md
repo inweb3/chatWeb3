@@ -1,4 +1,4 @@
-# chatweb3 - ChatGPT for blockchain and crypto data analysis
+# ChatWeb3 - ChatGPT for blockchain and crypto data analysis
 
 More details about this application prototype is available at: 
 
@@ -30,13 +30,13 @@ poetry install
 ## Run the application
 
 ```
-poetry run chatWeb3-gradio  # run as gradio app
+poetry run chatweb3
 ```
 
-or
+This command will run the ChatWeb3 gradio app. If you prefer to run it as a fastapi service, you can use:
 
 ```
-poetry run chatWeb3-fastapi  # run as fastapi server
+poetry run chatweb3 --interface fastapi
 ```
 
 ## Test

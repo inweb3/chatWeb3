@@ -218,7 +218,6 @@ with block:
 
 
 def start(debug=False):
-    print(f"Running in debug mode: {debug}")
     block.launch(debug=debug)
 
 
