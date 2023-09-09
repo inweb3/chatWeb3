@@ -8,7 +8,7 @@ import pytest
 from chatweb3.metadata_parser import Column, Database, MetadataParser, Schema, Table
 from chatweb3.snowflake_database import SnowflakeContainer
 from config.config import agent_config
-from create_agent import INDEX_ANNOTATION_FILE_PATH, LOCAL_INDEX_FILE_PATH
+from chatweb3.create_agent import INDEX_ANNOTATION_FILE_PATH, LOCAL_INDEX_FILE_PATH
 
 
 @pytest.fixture(scope="module")

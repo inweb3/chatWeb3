@@ -4,13 +4,13 @@ This file contains the tests for the create_agent module.
 """
 from unittest.mock import Mock, patch
 
-from create_agent import create_agent_executor
+from chatweb3.create_agent import create_agent_executor
 
 
-@patch("create_agent.create_snowflake_chat_agent")
-@patch("create_agent.CustomSnowflakeDatabaseToolkit")
-@patch("create_agent.SnowflakeContainer")
-@patch("create_agent.ChatOpenAI")
+@patch("chatweb3.create_agent.create_snowflake_chat_agent")
+@patch("chatweb3.create_agent.CustomSnowflakeDatabaseToolkit")
+@patch("chatweb3.create_agent.SnowflakeContainer")
+@patch("chatweb3.create_agent.ChatOpenAI")
 def test_create_agent_executor(
     mock_chat_openai,
     mock_snowflake_container,
