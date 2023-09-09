@@ -216,5 +216,14 @@ with block:
         outputs=[agent_state],
     )
 
-if __name__ == "__main__":
+
+def start():
     block.launch(debug=True)
+
+
+if __name__ == "__main__":
+    start()
+
+
+# if __name__ == "__main__":
+#     block.launch(debug=True)
