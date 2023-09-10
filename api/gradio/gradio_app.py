@@ -169,7 +169,8 @@ with block:
             "in the last 7 days?",
             lines=1,
         )
-        submit = gr.Button(value="Send", variant="Secondary").style(full_width=False)
+        submit = gr.Button(value="Send", variant="Secondary")
+        # submit = gr.Button(value="Send", variant="Secondary").style(full_width=False)
 
     gr.Examples(
         examples=[

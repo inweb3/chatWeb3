@@ -10,33 +10,6 @@ from typing import Optional
 import yaml
 
 
-# # Load logging configurations from a file
-# def load_config():
-
-#     # Get the directory of the current script
-#     dir_path = os.path.dirname(os.path.realpath(__file__))
-#     config_file_path = os.path.join(dir_path, 'logger_config.yaml')
-
-#     try:
-#         with open(config_file_path, 'r') as file:
-#             config = yaml.safe_load(file)
-#     except Exception as e:
-#         raise RuntimeError(f"Failed to load the logger configuration: {e}")
-
-#     env = os.environ.get("ENV", "default")
-#     env_config = config.get(env, {})
-#     default_config = config.get("default", {})
-
-#     # This updates the env_config dictionary with values from default_config,
-#     # but only for keys that are missing in env_config.
-#     final_config = {**default_config, **env_config}
-#     print(f"Loading config for ENV={env}: {final_config}")  # Add this print statement
-#     return final_config
-
-# return {**default_config, **env_config}
-# return config.get(env, config["default"])
-
-
 def load_config():
     # Get the directory of the current script
     dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -58,7 +31,7 @@ def load_config():
     # This updates the env_config dictionary with values from default_config,
     # but only for keys that are missing in env_config.
     final_config = {**default_config, **env_config}
-    print(f"Loading config for ENV={env}: {final_config}")  # Add this print statement
+    # print(f"Loading config for ENV={env}: {final_config}")  # Add this print statement
     return final_config
 
 
@@ -90,9 +63,9 @@ def _configure_handlers(
     date_format,
     log_file_path,
 ):
-    print(
-        f"_configure_handlers called with log_file_path: {log_file_path}"
-    )  # Debug print statement
+    # print(
+    #     f"_configure_handlers called with log_file_path: {log_file_path}"
+    # )  # Debug print statement
 
     # Remove all existing handlers to avoid duplicates
     for handler in logger.handlers[:]:
@@ -100,9 +73,9 @@ def _configure_handlers(
 
     # Set the logger's level
     logger.setLevel(log_level)
-    print(
-        f"Set log level for logger '{logger.name}' to {log_level}"
-    )  # Add this print statement
+    # print(
+    #     f"Set log level for logger '{logger.name}' to {log_level}"
+    # )  # Add this print statement
 
     handlers = []
 
@@ -128,7 +101,7 @@ def _find_project_root(start_path):
         os.path.dirname(path) != path
     ):  # Checks if we've reached the top-most directory
         if ".projectroot" in os.listdir(path):
-            print(f"Found project root at: {path}")  # Debug print statement
+            # print(f"Found project root at: {path}")  # Debug print statement
             return path
         path = os.path.dirname(path)
     raise ValueError("Project root not found!")
@@ -148,7 +121,7 @@ def _get_log_file_path(config_path=None):
     # Define the path for the log directory
     log_directory = os.path.join(project_root, "logs")
     if not os.path.exists(log_directory):
-        print(f"Creating logs directory at: {log_directory}")  # Debug print statement
+        # print(f"Creating logs directory at: {log_directory}")  # Debug print statement
         os.makedirs(log_directory, exist_ok=True)
 
     # Determine the project name from the project_root path
@@ -158,7 +131,7 @@ def _get_log_file_path(config_path=None):
     log_file_name = f"{project_name}.log"
     log_file_path = os.path.join(log_directory, log_file_name)
 
-    print(f"Log file path determined as: {log_file_path}")  # Debug print statement
+    # print(f"Log file path determined as: {log_file_path}")  # Debug print statement
 
     return log_file_path
 
@@ -179,9 +152,9 @@ def get_logger(
 
     # Use provided arguments, if they exist. Otherwise, fall back to the config values.
     log_level = log_level or config["log_level"]
-    print(
-        f"Received logger '{name}' with log_level={log_level}"
-    )  # Add this print statement
+    # print(
+    #     f"Received logger '{name}' with log_level={log_level}"
+    # )  # Add this print statement
     log_to_console = (
         log_to_console if log_to_console is not None else config["log_to_console"]
     )  # noqa E501
@@ -205,9 +178,8 @@ def get_logger(
     logger_adapter = CustomLoggerAdapter(logger, {})
     if logger.level == logging.DEBUG:
         logger_adapter.info(
-            f"\n\n\n *** Initialized '{name}' LOGGER with level '{logging.getLevelName(logger.level)}'"
-        )
-
+            f"*** Initialized '{name}' LOGGER with level"
+            f" {logging.getLevelName(logger.level)}\n")
     return logger_adapter
 
 

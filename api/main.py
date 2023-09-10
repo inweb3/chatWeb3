@@ -1,7 +1,7 @@
 import argparse
 from api.gradio.gradio_app import start as gradio_start
 from api.fastapi import start as fastapi_start
-from config.config import initialize_root_logger
+from config.logging_config import initialize_root_logger
 
 
 def main():
