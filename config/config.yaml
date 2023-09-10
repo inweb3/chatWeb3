@@ -68,3 +68,21 @@ ethereum_core_table_long_name:
     - "ethereum.core.fact_traces"
     - "ethereum.core.fact_transactions"
 
+logging:
+  default:
+    log_level: INFO
+    log_to_console: True
+    log_to_file: True
+    log_format: "%(asctime)s [%(name)s] [%(levelname)s] [%(module)s:%(lineno)d] [%(funcName)s]: %(message)s"
+    date_format: "%Y-%m-%d %H:%M:%S"
+    log_file_path: "logs/chatweb3.log"
+
+  development:
+    log_level: DEBUG
+    log_to_console: True
+    log_to_file: True
+
+  production:
+    log_level: WARNING
+    log_to_console: False
+    log_to_file: True

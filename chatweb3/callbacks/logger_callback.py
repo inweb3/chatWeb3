@@ -8,9 +8,10 @@ from langchain.schema import AgentAction, AgentFinish, LLMResult
 
 from config.logging_config import get_logger
 
-logger = get_logger(
-    __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
-)
+logger = get_logger(__name__)
+# logger = get_logger(
+#     __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
+# )
 
 
 class LoggerCallbackHandler(BaseCallbackHandler):

@@ -16,9 +16,11 @@ from config.config import agent_config
 from config.logging_config import get_logger
 from chatweb3.create_agent import create_agent_executor
 
-logger = get_logger(
-    __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
-)
+logger = get_logger(__name__)
+# logger = get_logger(
+#     __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
+# )
+
 
 load_dotenv()
 
@@ -106,8 +108,10 @@ def chat(inp, history, agent):
     # add code to check whether the FLIPSIDE_API_KEY is set,
     # if not, then raise an error message
     if not os.environ.get("FLIPSIDE_API_KEY"):
-        raise Exception("FLIPSIDE_API_KEY is not set, \
-                        please set it in .env file or in the environment variable")
+        raise Exception(
+            "FLIPSIDE_API_KEY is not set, \
+                        please set it in .env file or in the environment variable"
+        )
 
     history = history or []
     if agent is None:

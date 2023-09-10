@@ -8,9 +8,10 @@ from typing import Dict, List, Optional
 from chatweb3.utils import parse_table_long_name, parse_table_long_name_to_json_list
 from config.logging_config import get_logger
 
-logger = get_logger(
-    __name__, log_level=logging.INFO, log_to_console=True, log_to_file=True
-)
+# logger = get_logger(
+#     __name__, log_level=logging.INFO, log_to_console=True, log_to_file=True
+# )
+logger = get_logger(__name__)
 
 
 def nested_dict_to_dict(d):

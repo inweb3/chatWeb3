@@ -33,12 +33,14 @@ from chatweb3.agents.conversational_chat.prompt import (  # CUSTOM_CONV_SNOWFLAK
 from chatweb3.callbacks.logger_callback import LoggerCallbackHandler
 from chatweb3.snowflake_database import SnowflakeContainer
 from config.config import agent_config
+from config.logging_config import get_logger
 
 # from config.logging_config import get_logger
 # from loguru import logger
 
 # from langchain.callbacks import FileCallbackHandler
 
+logger = get_logger(__name__)
 # logger = get_logger(
 #     __name__, log_level=logging.INFO, log_to_console=True, log_to_file=True
 # )

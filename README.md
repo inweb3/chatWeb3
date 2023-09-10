@@ -52,7 +52,15 @@ make integration_tests
 
 General configuration can be done through `config/config.yaml`
 
-To enable detailed log, set the log_level to `logging.DEBUG` in `logger_callback.py`.
+To enable debug mode, create an environmental variable:
+
+ ```
+ ENV="development"
+ ```
+
+This will set the `log_level=logging.DEBUG` globally. You can tune the levels in `config.yaml`.
+
+To enable debug logging in any individual model, e.g., in `logger_callback.py`, add the following:
 
 ```
 logger = get_logger(
@@ -60,4 +68,6 @@ logger = get_logger(
 )
 ```
 
-The log file is located under the `chatweb3/logs` directory.
+Note that any logger parameters passed in here will overwrite the global debug level.
+
+The log file is located under the `chatweb3/logs` directory by default and can be configured in `config.yaml`
