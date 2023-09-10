@@ -1,12 +1,13 @@
+# This is the main file for your FastAPI app.
+# You can add your endpoints here.
+# Path: api/fastapi.py
 from fastapi import FastAPI, Request, Query
 from pydantic import BaseModel, Field
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from api.routers.well_known import well_known, get_ai_plugin, get_host
-from hashlib import md5
-from io import BytesIO
-
-# from api.services.qr import generate_qr_code_from_string
+from api.services.crypto_data import query_crypto_data_from_flipside, CryptoDataError
+from fastapi.responses import JSONResponse
 
 ai_plugin = get_ai_plugin()
 
@@ -16,31 +17,47 @@ app = FastAPI(
     version="0.1.0",
 )
 
+origins = [
+    "http://localhost:3000",
+    "https://chat.openai.com",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(well_known)
 
-# Add your endpoints here
+
+class ChatWeb3QueryRequest(BaseModel):
+    string: str
+
+
+@app.post("/query_crypto_data")
+async def query_chatweb3(data: ChatWeb3QueryRequest, request: Request):
+    try:
+        answer, thought_process = query_crypto_data_from_flipside(data.string)
+        return {"answer": answer, "thought_process": thought_process}
+    except CryptoDataError as e:
+        return JSONResponse(status_code=400, content={"error": str(e)})
+    except Exception as e:
+        return JSONResponse(status_code=500,
+                            content={"error": "Internal server error" + str(e)})
+
+
+@app.exception_handler(CryptoDataError)
+async def unicorn_exception_handler(request: Request, exc: CryptoDataError):
+    return JSONResponse(
+        status_code=400,
+        content={"message": f"Oops! {exc.name} did something. There goes a rainbow..."},
+    )
 
 
 def start():
     import uvicorn
 
     uvicorn.run("api.fastapi:app", host="localhost", port=8000, reload=True)
-
-
-# class GenerateQRCodeRequest(BaseModel):
-#     string: str
-
-
-# @app.get("/image/{img_hash}.png")
-# def get_image(img_hash: str):
-#     img_bytes = _IMAGE_CACHE[img_hash]
-#     img_bytes.seek(0)
-#     return StreamingResponse(img_bytes, media_type="image/png")
-
-
-# @app.post("/generate")
-# def generate_qr_code(data: GenerateQRCodeRequest, request: Request):
-#     img_bytes = generate_qr_code_from_string(data.string)
-#     img_hash = md5(img_bytes.getvalue()).hexdigest()
-#     _IMAGE_CACHE[img_hash] = img_bytes
-#     return {"link": f"{get_host(request)}/image/{img_hash}.png"}

@@ -1,5 +1,5 @@
 """
-test_chat.py
+test_gradio_app.py
 This file contains the tests for the main chat module.
 """
 import os
