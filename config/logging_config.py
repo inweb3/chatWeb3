@@ -21,7 +21,14 @@ def load_config():
     except Exception as e:
         raise RuntimeError(f"Failed to load the logger configuration: {e}")
 
-    env = os.environ.get("ENV", "default")
+    # if ENV is set, print its value
+    env = os.environ.get("ENV")
+    if env:
+        print(f"ENV is set to: {env}")
+    else:
+        env = "default"
+
+    # env = os.environ.get("ENV", "default")
 
     # Extract logging configurations
     logging_config = full_config.get("logging", {})
@@ -131,7 +138,7 @@ def _get_log_file_path(config_path=None):
     log_file_name = f"{project_name}.log"
     log_file_path = os.path.join(log_directory, log_file_name)
 
-    # print(f"Log file path determined as: {log_file_path}")  # Debug print statement
+    print(f"Log file path determined as: {log_file_path}")  # Debug print statement
 
     return log_file_path
 
@@ -215,3 +222,10 @@ def initialize_root_logger():
     Log file path: {log_file_path}
     """
     )
+
+    # check if log_levl is DEBUG, if so, print the config
+    if log_level == logging.DEBUG:
+        print(f"Initializing root logger with config: {config}")
+
+
+
