@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "ChatWeb3",
+  "name_for_model": "ChatWeb3",
+  "description_for_human": "Access Blockchain and Web3 Data using Chat",
+  "description_for_model": "Chat-based service for blockchain, crypto and Web3 related data access and analysis.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "$host/openapi.json",
+    "is_user_authenticated": false
+  },
+  "logo_url": "$host/.well-known/logo.png",
+  "contact_email": "info@inWeb3.com",
+  "legal_info_url": "http://inWeb3.com/legal"
+}

@@ -1,12 +1,8 @@
-# chatweb3 - ChatGPT for blockchain and crypto data analysis
+# ChatWeb3 - ChatGPT for blockchain and crypto data analysis
 
 More details about this application prototype is available at: 
 
 **[Can ChatGPT unlock blockchain data for the masses? Early insights from building ChatWeb3](https://www.inweb3.com/chatcrypto-chatgpt-for-blockchain-data/)**
-
-## Package dependency
-
-Use `poetry install` to install dependencies.
 
 ## Required API keys
 
@@ -22,10 +18,25 @@ FLIPSIDE_API_KEY="XXX"
 
 You will need to provide your OpenAI API key to use this application. An OpenAI API key can be obtained from [Openai](https://platform.openai.com/account/api-keys). 
 
+## Installation
+
+```
+git clone https://github.com/inWeb3ai/chatWeb3.git
+cd chatWeb3
+poetry shell
+poetry install
+```
+
 ## Run the application
 
 ```
-python chat_ui.py 
+poetry run chatweb3
+```
+
+This command will run the ChatWeb3 gradio app. If you prefer to run it as a fastapi service, you can use:
+
+```
+poetry run chatweb3 --interface fastapi
 ```
 
 ## Test
@@ -41,7 +52,15 @@ make integration_tests
 
 General configuration can be done through `config/config.yaml`
 
-To enable detailed log, set the log_level to `logging.DEBUG` in `logger_callback.py`.
+To enable debug mode, create an environmental variable:
+
+ ```
+ ENV="development"
+ ```
+
+This will set the `log_level=logging.DEBUG` globally. You can tune the levels in `config.yaml`.
+
+To enable debug logging in any individual model, e.g., in `logger_callback.py`, add the following:
 
 ```
 logger = get_logger(
@@ -49,4 +68,6 @@ logger = get_logger(
 )
 ```
 
-The log file is located under the `chatweb3/logs` directory.
+Note that any logger parameters passed in here will overwrite the global debug level.
+
+The log file is located under the `chatweb3/logs` directory by default and can be configured in `config.yaml`

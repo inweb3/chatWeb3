@@ -40,9 +40,10 @@ from config.logging_config import get_logger
 #     SDKError,
 # )
 
-logger = get_logger(
-    __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
-)
+logger = get_logger(__name__)
+# logger = get_logger(
+#     __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
+# )
 
 
 LIST_SNOWFLAKE_DATABASE_TABLE_NAMES_TOOL_NAME = "list_snowflake_db_table_names"

@@ -7,6 +7,39 @@ import logging
 import os
 import sys
 from typing import Optional
+import yaml
+
+
+def load_config():
+    # Get the directory of the current script
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    config_file_path = os.path.join(dir_path, "config.yaml")  # Updated to config.yaml
+
+    try:
+        with open(config_file_path, "r") as file:
+            full_config = yaml.safe_load(file)
+    except Exception as e:
+        raise RuntimeError(f"Failed to load the logger configuration: {e}")
+
+    # if ENV is set, print its value
+    env = os.environ.get("ENV")
+    if env:
+        print(f"ENV is set to: {env}")
+    else:
+        env = "default"
+
+    # env = os.environ.get("ENV", "default")
+
+    # Extract logging configurations
+    logging_config = full_config.get("logging", {})
+    env_config = logging_config.get(env, {})
+    default_config = logging_config.get("default", {})
+
+    # This updates the env_config dictionary with values from default_config,
+    # but only for keys that are missing in env_config.
+    final_config = {**default_config, **env_config}
+    # print(f"Loading config for ENV={env}: {final_config}")  # Add this print statement
+    return final_config
 
 
 # Define CustomLoggerAdapter class
@@ -37,6 +70,20 @@ def _configure_handlers(
     date_format,
     log_file_path,
 ):
+    # print(
+    #     f"_configure_handlers called with log_file_path: {log_file_path}"
+    # )  # Debug print statement
+
+    # Remove all existing handlers to avoid duplicates
+    for handler in logger.handlers[:]:
+        logger.removeHandler(handler)
+
+    # Set the logger's level
+    logger.setLevel(log_level)
+    # print(
+    #     f"Set log level for logger '{logger.name}' to {log_level}"
+    # )  # Add this print statement
+
     handlers = []
 
     if log_to_console:
@@ -55,19 +102,34 @@ def _configure_handlers(
         logger.addHandler(handler)
 
 
-def _get_log_file_path():
-    # Get the path of the current module
-    current_module_path = os.path.abspath(__file__)
+def _find_project_root(start_path):
+    path = os.path.dirname(start_path) if os.path.isfile(start_path) else start_path
+    while (
+        os.path.dirname(path) != path
+    ):  # Checks if we've reached the top-most directory
+        if ".projectroot" in os.listdir(path):
+            # print(f"Found project root at: {path}")  # Debug print statement
+            return path
+        path = os.path.dirname(path)
+    raise ValueError("Project root not found!")
 
-    # Get the path of the directory where the current module is located
-    config_directory = os.path.dirname(current_module_path)
 
-    # Get the path to the project root (assuming the config directory is located one level below the project root)
-    project_root = os.path.dirname(config_directory)
+def _get_log_file_path(config_path=None):
+    # Find the project root by looking for the .projectroot file
+    project_root = _find_project_root(os.path.abspath(__file__))
+
+    # If a config_path is provided, check if it's relative or absolute
+    if config_path:
+        if os.path.isabs(config_path):
+            return config_path
+        else:
+            return os.path.join(project_root, config_path)
 
     # Define the path for the log directory
     log_directory = os.path.join(project_root, "logs")
-    os.makedirs(log_directory, exist_ok=True)
+    if not os.path.exists(log_directory):
+        # print(f"Creating logs directory at: {log_directory}")  # Debug print statement
+        os.makedirs(log_directory, exist_ok=True)
 
     # Determine the project name from the project_root path
     project_name = os.path.basename(project_root)
@@ -76,43 +138,11 @@ def _get_log_file_path():
     log_file_name = f"{project_name}.log"
     log_file_path = os.path.join(log_directory, log_file_name)
 
+    print(f"Log file path determined as: {log_file_path}")  # Debug print statement
+
     return log_file_path
 
 
-# default parameters
-log_level = logging.INFO
-log_to_console = True
-log_to_file = False
-log_format = "%(asctime)s [%(name)s] [%(levelname)s] [%(module)s:%(lineno)d] [%(funcName)s]: %(message)s"
-date_format = "%Y-%m-%d %H:%M:%S"
-log_file_path = _get_log_file_path()
-
-# Configure the root logger
-root_logger = logging.getLogger()
-_configure_handlers(
-    root_logger,
-    log_level=log_level,
-    log_to_console=log_to_console,
-    log_to_file=log_to_file,
-    log_format=log_format,
-    date_format=date_format,
-    log_file_path=log_file_path,
-)
-
-root_logger_adapter = CustomLoggerAdapter(root_logger, {})
-
-# Log a statement during the root logger adapter initialization
-root_logger_adapter.info(
-    f"""LOGGER initialized with the following options:
-Log level: {log_level}
-Log to console: {log_to_console}
-Log to file: {log_to_file}
-Log file path: {log_file_path}
-"""
-)
-
-
-# Child loggers will inherit the attributes from the root logger unless they are explicitly overridden
 def get_logger(
     name: str,
     log_level: Optional[int] = None,
@@ -122,53 +152,28 @@ def get_logger(
     date_format: Optional[str] = None,
     log_file_path: Optional[str] = None,
 ):
+    config = load_config()
     logger = logging.getLogger(name)
+    # if logger.handlers:
+    #     return CustomLoggerAdapter(logger, {})
 
-    if logger.handlers:
-        return CustomLoggerAdapter(logger, {})
-
-    if log_level is not None:
-        logger.setLevel(log_level)
-    else:
-        logger.setLevel(logging.getLogger().level)  # Inherit log level from root logger
-
-    if log_to_file and log_file_path is None:
-        log_file_path = next(
-            (
-                handler.baseFilename
-                for handler in root_logger.handlers
-                if isinstance(handler, logging.FileHandler)
-            ),
-            None,
-        )  # Use root logger's log_file_path
-
-    if log_to_console is None:
-        log_to_console = any(
-            isinstance(handler, logging.StreamHandler)
-            for handler in root_logger.handlers
-        )
-
-    if log_to_file is None:
-        log_to_file = any(
-            isinstance(handler, logging.FileHandler) for handler in root_logger.handlers
-        )
-
-    if log_format is None:
-        if root_logger.handlers[0].formatter is not None:
-            log_format = root_logger.handlers[0].formatter._fmt
-
-    if date_format is None:
-        if root_logger.handlers[0].formatter is not None:
-            date_format = root_logger.handlers[0].formatter.datefmt
-
-    if log_to_file and log_file_path is None:
-        log_file_path = (
-            _get_log_file_path()
-        )  # Assign default log file path if not found in root_logger and log_to_file is True
+    # Use provided arguments, if they exist. Otherwise, fall back to the config values.
+    log_level = log_level or config["log_level"]
+    # print(
+    #     f"Received logger '{name}' with log_level={log_level}"
+    # )  # Add this print statement
+    log_to_console = (
+        log_to_console if log_to_console is not None else config["log_to_console"]
+    )  # noqa E501
+    log_to_file = log_to_file if log_to_file is not None else config["log_to_file"]
+    log_format = log_format or config["log_format"]
+    date_format = date_format or config["date_format"]
+    log_file_path = log_file_path or _get_log_file_path(config.get("log_file_path"))
+    # log_file_path = log_file_path or config.get("log_file_path", _get_log_file_path())
 
     _configure_handlers(
         logger,
-        log_level=logger.level,
+        log_level=log_level,
         log_to_console=log_to_console,
         log_to_file=log_to_file,
         log_format=log_format,
@@ -176,13 +181,51 @@ def get_logger(
         log_file_path=log_file_path,
     )
 
-    # Add this line to prevent propagation of log messages to ancestor loggers
     logger.propagate = False
-
     logger_adapter = CustomLoggerAdapter(logger, {})
     if logger.level == logging.DEBUG:
         logger_adapter.info(
-            f"\n\n\n *** Initialized '{name}' LOGGER with level '{logging.getLevelName(logger.level)}'"
-        )
-
+            f"*** Initialized '{name}' LOGGER with level"
+            f" {logging.getLevelName(logger.level)}\n")
     return logger_adapter
+
+
+def initialize_root_logger():
+    config = load_config()
+    log_level = config["log_level"]
+    log_to_console = config["log_to_console"]
+    log_to_file = config["log_to_file"]
+    log_format = config["log_format"]
+    date_format = config["date_format"]
+    log_file_path = config.get("log_file_path", _get_log_file_path())
+
+    # Always pass the log_file_path from config to _get_log_file_path
+    log_file_path = _get_log_file_path(config.get("log_file_path"))
+
+    root_logger = logging.getLogger()
+    _configure_handlers(
+        root_logger,
+        log_level=log_level,
+        log_to_console=log_to_console,
+        log_to_file=log_to_file,
+        log_format=log_format,
+        date_format=date_format,
+        log_file_path=log_file_path,
+    )
+
+    root_logger_adapter = CustomLoggerAdapter(root_logger, {})
+    root_logger_adapter.info(
+        f"""LOGGER initialized with the following options:
+    Log level: {log_level}
+    Log to console: {log_to_console}
+    Log to file: {log_to_file}
+    Log file path: {log_file_path}
+    """
+    )
+
+    # check if log_levl is DEBUG, if so, print the config
+    if log_level == logging.DEBUG:
+        print(f"Initializing root logger with config: {config}")
+
+
+

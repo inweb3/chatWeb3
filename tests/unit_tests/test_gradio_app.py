@@ -1,12 +1,12 @@
 """
-test_chat.py
+test_gradio_app.py
 This file contains the tests for the main chat module.
 """
 import os
 from unittest.mock import Mock
 
-from chat_ui import format_response  # split_thought_process_text,
-from chat_ui import chat, set_openai_api_key
+from api.gradio.gradio_app import format_response  # split_thought_process_text,
+from api.gradio.gradio_app import chat, set_openai_api_key
 
 # from chatweb3.chat_ui import CONVERSATION_MODE
 from config.config import agent_config

@@ -15,9 +15,10 @@ from chatweb3.agents.conversational_chat.output_parser import (
 # )
 from config.logging_config import get_logger
 
-logger = get_logger(
-    __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
-)
+logger = get_logger(__name__)
+# logger = get_logger(
+#     __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
+# )
 
 
 class SnowflakeConversationalChatAgent(ConversationalChatAgent):

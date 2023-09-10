@@ -14,11 +14,13 @@ from dotenv import load_dotenv
 
 from config.config import agent_config
 from config.logging_config import get_logger
-from create_agent import create_agent_executor
+from chatweb3.create_agent import create_agent_executor
 
-logger = get_logger(
-    __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
-)
+logger = get_logger(__name__)
+# logger = get_logger(
+#     __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
+# )
+
 
 load_dotenv()
 
@@ -102,6 +104,15 @@ def chat(inp, history, agent):
     history: The updated chat history
     thought_process_text: The formatted thought process text
     """
+
+    # add code to check whether the FLIPSIDE_API_KEY is set,
+    # if not, then raise an error message
+    if not os.environ.get("FLIPSIDE_API_KEY"):
+        raise Exception(
+            "FLIPSIDE_API_KEY is not set, \
+                        please set it in .env file or in the environment variable"
+        )
+
     history = history or []
     if agent is None:
         history.append((inp, "Please paste your OpenAI API Key to use"))
@@ -158,7 +169,8 @@ with block:
             "in the last 7 days?",
             lines=1,
         )
-        submit = gr.Button(value="Send", variant="Secondary").style(full_width=False)
+        submit = gr.Button(value="Send", variant="Secondary")
+        # submit = gr.Button(value="Send", variant="Secondary").style(full_width=False)
 
     gr.Examples(
         examples=[
@@ -209,5 +221,19 @@ with block:
         outputs=[agent_state],
     )
 
-if __name__ == "__main__":
-    block.launch(debug=True)
+
+def start(debug=False):
+    block.launch(debug=debug)
+
+
+# if __name__ == "__main__":
+#     import argparse
+
+#     parser = argparse.ArgumentParser(description="Start the Gradio App")
+#     parser.add_argument('--debug', action='store_true', help='Run in debug mode')
+#     args = parser.parse_args()
+
+#     start(args.debug)
+
+# if __name__ == "__main__":
+#     block.launch(debug=True)
