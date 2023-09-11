@@ -2,6 +2,7 @@ import logging
 import os
 
 import pytest
+
 from config.logging_config import (
     _get_log_file_path,
     get_logger,

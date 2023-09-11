@@ -19,6 +19,7 @@ tool:
   check_table_metadata_tool_mode: local
   # query_database_tool_mode: shroomdk
   query_database_tool_mode: flipside
+  query_database_tool_return_direct: true
 
 flipside:
   query_timeout: 5

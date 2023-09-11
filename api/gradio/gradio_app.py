@@ -12,9 +12,9 @@ import re
 import gradio as gr  # type: ignore
 from dotenv import load_dotenv
 
+from chatweb3.create_agent import create_agent_executor
 from config.config import agent_config
 from config.logging_config import get_logger
-from chatweb3.create_agent import create_agent_executor
 
 logger = get_logger(__name__)
 # logger = get_logger(

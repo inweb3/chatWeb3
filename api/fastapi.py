@@ -1,13 +1,13 @@
 # This is the main file for your FastAPI app.
 # You can add your endpoints here.
 # Path: api/fastapi.py
-from fastapi import FastAPI, Request, Query
-from pydantic import BaseModel, Field
-from fastapi.responses import StreamingResponse
+from fastapi import FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
-from api.routers.well_known import well_known, get_ai_plugin, get_host
-from api.services.crypto_data import query_crypto_data_from_flipside, CryptoDataError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
+from pydantic import BaseModel, Field
+
+from api.routers.well_known import get_ai_plugin, get_host, well_known
+from api.services.crypto_data import CryptoDataError, query_crypto_data_from_flipside
 
 ai_plugin = get_ai_plugin()
 
@@ -45,8 +45,9 @@ async def query_chatweb3(data: ChatWeb3QueryRequest, request: Request):
     except CryptoDataError as e:
         return JSONResponse(status_code=400, content={"error": str(e)})
     except Exception as e:
-        return JSONResponse(status_code=500,
-                            content={"error": "Internal server error" + str(e)})
+        return JSONResponse(
+            status_code=500, content={"error": "Internal server error" + str(e)}
+        )
 
 
 @app.exception_handler(CryptoDataError)

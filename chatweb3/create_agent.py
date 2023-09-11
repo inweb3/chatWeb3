@@ -63,6 +63,11 @@ QUERY_DATABASE_TOOL_TOP_K = agent_config.get("tool.query_database_tool_top_k")
 #    "agent_chain.agent_executor_return_intermediate_steps"
 # )
 
+# agent_executor_kwargs = {"handle_parsing_errors": True}
+agent_executor_kwargs = {
+    "handle_parsing_errors": "Unable to parse output. Check your output format and make sure it conforms!"
+}
+
 
 def create_agent_executor(conversation_mode=False):
     """
@@ -138,6 +143,7 @@ def create_agent_executor(conversation_mode=False):
             callbacks=callbacks,
             verbose=True,
             memory=memory,
+            agent_executor_kwargs=agent_executor_kwargs,
         )
 
     else:
@@ -154,6 +160,7 @@ def create_agent_executor(conversation_mode=False):
             early_stopping_method="generate",
             callbacks=callbacks,
             verbose=True,
+            agent_executor_kwargs=agent_executor_kwargs,
         )
 
     return agent_executor

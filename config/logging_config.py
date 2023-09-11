@@ -7,6 +7,7 @@ import logging
 import os
 import sys
 from typing import Optional
+
 import yaml
 
 
@@ -186,7 +187,8 @@ def get_logger(
     if logger.level == logging.DEBUG:
         logger_adapter.info(
             f"*** Initialized '{name}' LOGGER with level"
-            f" {logging.getLevelName(logger.level)}\n")
+            f" {logging.getLevelName(logger.level)}\n"
+        )
     return logger_adapter
 
 
@@ -226,6 +228,3 @@ def initialize_root_logger():
     # check if log_levl is DEBUG, if so, print the config
     if log_level == logging.DEBUG:
         print(f"Initializing root logger with config: {config}")
-
-
-
