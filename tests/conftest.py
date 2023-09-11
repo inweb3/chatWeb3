@@ -3,13 +3,14 @@ conftest.py
 This file contains the fixtures for the tests.
 """
 
-import pytest
 import logging
 
+import pytest
+
+from chatweb3.create_agent import INDEX_ANNOTATION_FILE_PATH, LOCAL_INDEX_FILE_PATH
 from chatweb3.metadata_parser import Column, Database, MetadataParser, Schema, Table
 from chatweb3.snowflake_database import SnowflakeContainer
 from config.config import agent_config
-from chatweb3.create_agent import INDEX_ANNOTATION_FILE_PATH, LOCAL_INDEX_FILE_PATH
 
 
 @pytest.fixture

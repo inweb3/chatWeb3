@@ -1,6 +1,8 @@
 import argparse
-from config.logging_config import initialize_root_logger
+
 from dotenv import load_dotenv
+
+from config.logging_config import initialize_root_logger
 
 load_dotenv()
 
@@ -18,9 +20,11 @@ def main():
 
     if args.interface == "gradio":
         from api.gradio.gradio_app import start as gradio_start
+
         gradio_start()
     elif args.interface == "fastapi":
         from api.fastapi import start as fastapi_start
+
         fastapi_start()
 
 

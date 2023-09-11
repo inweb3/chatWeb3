@@ -1,5 +1,6 @@
 import json
 from string import Template
+
 from fastapi import APIRouter, Request
 from fastapi.responses import FileResponse, Response
 

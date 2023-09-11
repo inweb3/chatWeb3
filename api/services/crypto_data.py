@@ -1,9 +1,10 @@
 # Description: This file contains the code to query crypto data from Flipside Crypto
 # Path: api/services/crypto_data.py
-from chatweb3.create_agent import create_agent_executor
-from config.logging_config import get_logger
-from config.config import agent_config
 import os
+
+from chatweb3.create_agent import create_agent_executor
+from config.config import agent_config
+from config.logging_config import get_logger
 
 logger = get_logger(__name__)
 
@@ -41,6 +42,7 @@ def query_crypto_data_from_flipside(inp: str) -> str:
         return answer, thought_process
     except Exception as e:
         raise CryptoDataError(name="Crypto Data Error", message=str(e))
+
 
 # def query_crypto_data_from_flipside(inp: str) -> str:
 #     """
