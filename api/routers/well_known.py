@@ -1,3 +1,4 @@
+# path: api/routers/well_known.py
 import json
 from string import Template
 

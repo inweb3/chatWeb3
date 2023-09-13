@@ -23,7 +23,7 @@ def main():
 
         gradio_start()
     elif args.interface == "fastapi":
-        from api.fastapi import start as fastapi_start
+        from api.api_endpoints import start as fastapi_start
 
         fastapi_start()
 

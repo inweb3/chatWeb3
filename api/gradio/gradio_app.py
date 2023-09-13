@@ -1,5 +1,5 @@
 """
-chat.py
+path: api/gradio/gradio_app.py
 This file contains the main code for the chatbot application.
 """
 
@@ -223,17 +223,12 @@ with block:
 
 
 def start(debug=False):
-    block.launch(debug=debug)
+    try:
+        logger.info("Starting Gradio app...")
+        block.launch(debug=debug)
+        logger.info("Gradio app started successfully!")
+    except Exception as e:
+        logger.error(f"Error while starting Gradio app: {e}")
 
-
-# if __name__ == "__main__":
-#     import argparse
-
-#     parser = argparse.ArgumentParser(description="Start the Gradio App")
-#     parser.add_argument('--debug', action='store_true', help='Run in debug mode')
-#     args = parser.parse_args()
-
-#     start(args.debug)
-
-# if __name__ == "__main__":
-#     block.launch(debug=True)
+# def start(debug=True):
+#     block.launch(debug=debug)
