@@ -1,5 +1,5 @@
 """
-config.py
+path: config/config.py
 This file contains the configuration for the chatbot application.
 """
 import os

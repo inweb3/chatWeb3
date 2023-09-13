@@ -51,26 +51,52 @@ def clean_text(text):
     return text.strip().replace("\n", "\n  ")
 
 
+# def format_response(response: dict) -> str:
+#     logger.debug(f"response: {response}")
+
+#     formatted_steps = []
+#     for i, step in enumerate(response["intermediate_steps"], start=1):
+#         agent_action_data, text = step
+#         tool = agent_action_data.tool
+#         tool_input = agent_action_data.tool_input
+#         log = agent_action_data.log
+
+#         text = clean_text(text)
+#         if CONVERSATION_MODE:
+#             formatted_steps.append(f"*Action*: {tool}\n\n*Observation*: {text}")
+#         else:
+#             thought, action = log.strip().split("\nAction:")
+#             thought = thought.replace("Thought: ", "") if i == 1 else thought
+#             formatted_steps.append(
+#                 f"**Thought {i}**: {thought}\n\n*Action:*\n\nTool: {tool}"
+#                 f"\n\nTool input: {tool_input}\n\n*Observation:*\n\n{text}"
+#             )
+
 def format_response(response: dict) -> str:
     logger.debug(f"response: {response}")
 
     formatted_steps = []
     for i, step in enumerate(response["intermediate_steps"], start=1):
-        agent_action_data, text = step
-        tool = agent_action_data.tool
-        tool_input = agent_action_data.tool_input
-        log = agent_action_data.log
+        # Unpack step based on its length
+        if len(step) == 2:
+            agent_action_data, text = step
+        else:
+            agent_action_data = None
+            text = step[0]
 
         text = clean_text(text)
+        
         if CONVERSATION_MODE:
-            formatted_steps.append(f"*Action*: {tool}\n\n*Observation*: {text}")
+            formatted_steps.append(f"*Action*: {agent_action_data.tool if agent_action_data else 'Unknown'}\n\n*Observation*: {text}")
         else:
-            thought, action = log.strip().split("\nAction:")
-            thought = thought.replace("Thought: ", "") if i == 1 else thought
-            formatted_steps.append(
-                f"**Thought {i}**: {thought}\n\n*Action:*\n\nTool: {tool}"
-                f"\n\nTool input: {tool_input}\n\n*Observation:*\n\n{text}"
-            )
+            if agent_action_data and 'Thought:' in agent_action_data.log:
+                thought = agent_action_data.log.split("\nAction:")[0].replace("Thought: ", "").strip()
+                formatted_steps.append(
+                    f"**Thought {i}**: {thought}\n\n*Action:*\n\nTool: {agent_action_data.tool}"
+                    f"\n\nTool input: {agent_action_data.tool_input}\n\n*Observation:*\n\n{text}"
+                )
+            else:
+                formatted_steps.append(f"*Observation*: {text}")
 
     formatted_output = "\n\n".join(formatted_steps)
 

@@ -1,7 +1,7 @@
-# config.yaml
+# path: config/config.yaml
 
 agent:
-  conversational_chat: false
+  conversational_chat: False
   # conversational_chat: true
   # Note: recommend GPT-4 to use conversational_chat mode
 
@@ -14,12 +14,15 @@ model:
   # llm_name: gpt-4
 
 tool:
-  query_database_tool_top_k: 10
+  query_database_tool_top_k: 20
   check_table_summary_tool_mode: local
   check_table_metadata_tool_mode: local
   # query_database_tool_mode: shroomdk
   query_database_tool_mode: flipside
-  query_database_tool_return_direct: true
+  # We automatically set the query_database_tool_return_direct option in config.py
+  # based on the value of the top_k option
+  # DO NOT configure this option here !!!
+  # query_database_tool_return_direct: True 
 
 flipside:
   query_timeout: 5
