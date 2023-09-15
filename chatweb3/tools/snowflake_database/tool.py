@@ -401,9 +401,13 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
                                 is set correctly."
                         )
                     else:
-                        result_flipside = [f"Flipside query attempt {i+1} error: {e}"]
+                        result_flipside = [
+                            f"AttributeError: Flipside query attempt {i+1} error: {e}"
+                        ]
                 except Exception as e:
-                    result_flipside = [f"Flipside query attempt {i+1} error: {e}"]
+                    result_flipside = [
+                        f"Exception: Flipside query attempt {i+1} error: {e}"
+                    ]
             return result_flipside
 
         if mode == "snowflake":

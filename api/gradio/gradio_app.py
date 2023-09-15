@@ -4,7 +4,6 @@ This file contains the main code for the chatbot application.
 """
 
 import datetime
-import logging
 import os
 import re
 
@@ -15,6 +14,7 @@ from dotenv import load_dotenv
 from chatweb3.create_agent import create_agent_executor
 from config.config import agent_config
 from config.logging_config import get_logger
+from langchain.schema import AgentAction
 
 logger = get_logger(__name__)
 # logger = get_logger(
@@ -51,56 +51,67 @@ def clean_text(text):
     return text.strip().replace("\n", "\n  ")
 
 
-# def format_response(response: dict) -> str:
-#     logger.debug(f"response: {response}")
+def format_agent_action(agent_action_data, step_number):
+    # print(f"{agent_action_data=}, {step_number=}")
+    tool = agent_action_data.tool
+    tool_input = agent_action_data.tool_input
+    log_text = clean_text(agent_action_data.log)
 
-#     formatted_steps = []
-#     for i, step in enumerate(response["intermediate_steps"], start=1):
-#         agent_action_data, text = step
-#         tool = agent_action_data.tool
-#         tool_input = agent_action_data.tool_input
-#         log = agent_action_data.log
+    if not log_text.startswith("Thought:"):
+        log_text = "Thought: " + log_text
 
-#         text = clean_text(text)
-#         if CONVERSATION_MODE:
-#             formatted_steps.append(f"*Action*: {tool}\n\n*Observation*: {text}")
-#         else:
-#             thought, action = log.strip().split("\nAction:")
-#             thought = thought.replace("Thought: ", "") if i == 1 else thought
-#             formatted_steps.append(
-#                 f"**Thought {i}**: {thought}\n\n*Action:*\n\nTool: {tool}"
-#                 f"\n\nTool input: {tool_input}\n\n*Observation:*\n\n{text}"
-#             )
+    # Now, since we ensured 'Thought:' is present,
+    # we can extract the text between 'Thought:' and 'Action:'
+    thought_text = log_text.split("Thought:")[1].split("Action:")[0].strip()
+
+    agent_action_text = (
+        f"**Thought {step_number}**: {thought_text}"
+        f"\n\n*Action:*\n\nTool: {tool}"
+        f"\n\nTool input: {tool_input}"
+    )
+
+    # print(f"{agent_action_text=}")
+    return agent_action_text
+
+
+def format_observation(observation):
+    # print(f"{observation=}")
+    if isinstance(observation, list):
+        # print(f"observation is a list")
+        formatted_observation = "\n".join(
+            [f"*Observation*: {clean_text(item)}" for item in observation]
+        )
+        # print(f"{formatted_observation=}")
+    else:
+        # print(f"observation is not a list")
+        formatted_observation = f"*Observation*: {clean_text(observation)}"
+        # print(f"{formatted_observation=}")
+
+    observation_text = formatted_observation
+    # observation_text = formatted_observation.replace("*Observation*: ", "")
+    return observation_text
+
 
 def format_response(response: dict) -> str:
-    logger.debug(f"response: {response}")
-
     formatted_steps = []
     for i, step in enumerate(response["intermediate_steps"], start=1):
-        # Unpack step based on its length
-        if len(step) == 2:
-            agent_action_data, text = step
+        # print(f"{i=}, {step=}")
+        if isinstance(step[0], AgentAction):
+            # print(f"step[0] is an AgentAction")
+            formatted_steps.append(format_agent_action(step[0], i))
+            # print(f"{formatted_steps=}")
+            for item in step[1:]:
+                formatted_steps.append(format_observation(item))
+                # print(f"{formatted_steps=}")
         else:
-            agent_action_data = None
-            text = step[0]
-
-        text = clean_text(text)
-        
-        if CONVERSATION_MODE:
-            formatted_steps.append(f"*Action*: {agent_action_data.tool if agent_action_data else 'Unknown'}\n\n*Observation*: {text}")
-        else:
-            if agent_action_data and 'Thought:' in agent_action_data.log:
-                thought = agent_action_data.log.split("\nAction:")[0].replace("Thought: ", "").strip()
-                formatted_steps.append(
-                    f"**Thought {i}**: {thought}\n\n*Action:*\n\nTool: {agent_action_data.tool}"
-                    f"\n\nTool input: {agent_action_data.tool_input}\n\n*Observation:*\n\n{text}"
-                )
-            else:
-                formatted_steps.append(f"*Observation*: {text}")
+            formatted_steps.append(format_observation(step[0]))
+            # print(f"{formatted_steps=}")
 
     formatted_output = "\n\n".join(formatted_steps)
+    # print(f"{formatted_output=}")
 
     if CONVERSATION_MODE:
+        # print(f"CONVERSATION_MODE is True")
         chat_messages = "\n\n".join(
             [
                 f"**{msg.__class__.__name__}**: {msg.content}"
@@ -108,8 +119,11 @@ def format_response(response: dict) -> str:
             ]
         )
         formatted_output = f"{chat_messages}\n\n{formatted_output}"
+        # print(f"{formatted_output=}")
     else:
+        # print(f"CONVERSATION_MODE is False")
         formatted_output += f"\n\n**Final answer**: {response['output']}"
+        # print(f"{formatted_output=}")
 
     return formatted_output
 
@@ -256,5 +270,124 @@ def start(debug=False):
     except Exception as e:
         logger.error(f"Error while starting Gradio app: {e}")
 
+
 # def start(debug=True):
 #     block.launch(debug=debug)
+
+# def format_response(response: dict) -> str:
+#     logger.debug(f"response: {response}")
+
+#     formatted_steps = []
+#     for i, step in enumerate(response["intermediate_steps"], start=1):
+#         agent_action_data, text = step
+#         tool = agent_action_data.tool
+#         tool_input = agent_action_data.tool_input
+#         log = agent_action_data.log
+
+#         text = clean_text(text)
+#         if CONVERSATION_MODE:
+#             formatted_steps.append(f"*Action*: {tool}\n\n*Observation*: {text}")
+#         else:
+#             thought, action = log.strip().split("\nAction:")
+#             thought = thought.replace("Thought: ", "") if i == 1 else thought
+#             formatted_steps.append(
+#                 f"**Thought {i}**: {thought}\n\n*Action:*\n\nTool: {tool}"
+#                 f"\n\nTool input: {tool_input}\n\n*Observation:*\n\n{text}"
+#             )
+
+# def format_response(response: dict) -> str:
+#     logger.debug(f"response: {response}")
+
+#     formatted_steps = []
+#     for i, step in enumerate(response["intermediate_steps"], start=1):
+#         # Unpack step based on its length
+#         if len(step) == 2:
+#             agent_action_data, text = step
+#         else:
+#             agent_action_data = None
+#             text = step[0]
+
+#         text = clean_text(text)
+
+#         if CONVERSATION_MODE:
+#             formatted_steps.append(f"*Action*: {agent_action_data.tool if agent_action_data else 'Unknown'}\n\n*Observation*: {text}")
+#         else:
+#             if agent_action_data and 'Thought:' in agent_action_data.log:
+#                 thought = agent_action_data.log.split("\nAction:")[0].replace("Thought: ", "").strip()
+#                 formatted_steps.append(
+#                     f"**Thought {i}**: {thought}\n\n*Action:*\n\nTool: {agent_action_data.tool}"
+#                     f"\n\nTool input: {agent_action_data.tool_input}\n\n*Observation:*\n\n{text}"
+#                 )
+#             else:
+#                 formatted_steps.append(f"*Observation*: {text}")
+
+#     formatted_output = "\n\n".join(formatted_steps)
+
+#     if CONVERSATION_MODE:
+#         chat_messages = "\n\n".join(
+#             [
+#                 f"**{msg.__class__.__name__}**: {msg.content}"
+#                 for msg in response.get("chat_history", [])
+#             ]
+#         )
+#         formatted_output = f"{chat_messages}\n\n{formatted_output}"
+#     else:
+#         formatted_output += f"\n\n**Final answer**: {response['output']}"
+
+#     return formatted_output
+
+# def format_response(response: dict) -> str:
+#     logger.debug(f"response: {response}")
+
+#     formatted_steps = []
+#     for i, step in enumerate(response["intermediate_steps"], start=1):
+#         # Check if the step contains an AgentAction
+#         if isinstance(step[0], AgentAction):
+#             agent_action_data = step[0]
+#             tool = agent_action_data.tool
+#             tool_input = agent_action_data.tool_input
+#             log_text = clean_text(agent_action_data.log)
+#             # print(f"{log_text=}")
+
+#             if 'Thought:' not in log_text:
+#                 log_text = "Thought: " + log_text
+
+#             # Now, since we ensured 'Thought:' is present,
+#             # we can extract the text between 'Thought:' and 'Action:'
+#             thought_text = log_text.split('Thought:')[1].split('Action:')[0].strip()
+
+#             formatted_steps.append(
+#                 f"**Thought {i}**: {thought_text}"
+#                 f"\n\n*Action:*\n\nTool: {tool}"
+#                 f"\n\nTool input: {tool_input}"
+#             )
+
+#             # Format the remaining items in the step
+#             for item in step[1:]:
+#                 if isinstance(item, str):
+#                     formatted_steps.append(f"*Observation*: {clean_text(item)}")
+#                 elif isinstance(item, list):
+#                     for list_item in item:
+#                         formatted_steps.append(
+#                             f"*Observation*: {clean_text(list_item)}"
+#                             )
+#                 # Additional types can be added here as needed
+
+#         else:
+#             # This step contains only a string or other type
+#             formatted_steps.append(f"*Observation*: {clean_text(step[0])}")
+
+#     formatted_output = "\n\n".join(formatted_steps)
+
+#     if CONVERSATION_MODE:
+#         chat_messages = "\n\n".join(
+#             [
+#                 f"**{msg.__class__.__name__}**: {msg.content}"
+#                 for msg in response.get("chat_history", [])
+#             ]
+#         )
+#         formatted_output = f"{chat_messages}\n\n{formatted_output}"
+#     else:
+#         formatted_output += f"\n\n**Final answer**: {response['output']}"
+
+#     return formatted_output
