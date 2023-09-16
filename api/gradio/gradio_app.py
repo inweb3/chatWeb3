@@ -82,17 +82,32 @@ def format_agent_action(agent_action_data, step_number, mode="string"):
     return agent_action_text
 
 
-def format_observation(observation):
+def format_observation(observation, mode="string"):
     # print(f"{observation=}")
     if isinstance(observation, list):
         # print(f"observation is a list")
-        formatted_observation = "\n".join(
-            [f"*Observation*: {clean_text(item)}" for item in observation]
-        )  # noqa: E501
+        # formatted_observation = "\n".join(
+        #     [f"*Observation*: {clean_text(item)}" for item in observation]
+        # )  # noqa: E501
+        if mode == "string":
+            formatted_observation = "\n".join(
+                [f"{clean_text(item)}" for item in observation]
+            )
+            formatted_observation = f"*Observation*:\n{formatted_observation}"
+        elif mode == "markdown":
+            formatted_observation = f"*Observation*: {observation}"
+        else:
+            raise ValueError(f"Unknown format_observation mode: {mode}")
         # print(f"{formatted_observation=}")
     else:
         # print(f"observation is not a list")
-        formatted_observation = f"*Observation*: {clean_text(observation)}"
+        if mode == "string":
+            formatted_observation = f"*Observation*: {clean_text(observation)}"
+        elif mode == "markdown":
+            formatted_observation = f"*Observation*: {observation}"
+        else:
+            raise ValueError(f"Unknown format_observation mode: {mode}")
+
         # print(f"{formatted_observation=}")
 
     observation_text = formatted_observation
