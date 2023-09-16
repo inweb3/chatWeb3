@@ -18,6 +18,9 @@ from chatweb3.tools.snowflake_database.prompt import (
     SNOWFLAKE_QUERY_CHECKER,
     TOOLKIT_INSTRUCTIONS,
 )
+from chatweb3.tools.snowflake_database.tool import (
+    handle_tool_error,
+)
 from chatweb3.tools.snowflake_database.tool_custom import (
     CheckQuerySyntaxTool,
     CheckTableMetadataTool,
@@ -110,5 +113,7 @@ class CustomSnowflakeDatabaseToolkit(SnowflakeDatabaseToolkit):
                 # callback_manager=callback_manager,
                 callbacks=callbacks,
                 verbose=verbose,
+                handle_tool_error=True
+                # handle_tool_error=handle_tool_error,
             ),
         ]
