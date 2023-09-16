@@ -16,7 +16,7 @@ model:
 tool:
   query_database_tool_top_k: 10
   query_database_tool_mode: flipside
-  query_database_tool_return_direct_if_successful: False 
+  query_database_tool_return_direct_if_successful: True
   check_table_summary_tool_mode: local
   check_table_metadata_tool_mode: local
   # DO NOT enable the following option unless you know what you are doing 
