@@ -1,7 +1,7 @@
-# config.yaml
+# path: config/config.yaml
 
 agent:
-  conversational_chat: false
+  conversational_chat: False
   # conversational_chat: true
   # Note: recommend GPT-4 to use conversational_chat mode
 
@@ -15,17 +15,21 @@ model:
 
 tool:
   query_database_tool_top_k: 10
+  query_database_tool_mode: flipside
+  query_database_tool_return_direct_if_successful: True
   check_table_summary_tool_mode: local
   check_table_metadata_tool_mode: local
-  # query_database_tool_mode: shroomdk
-  query_database_tool_mode: flipside
-  query_database_tool_return_direct: true
+  # DO NOT enable the following option unless you know what you are doing 
+  query_database_tool_return_direct: False  
+  # This option makes the tool return immediately even if the query is not successful
+  # therefore, the tool will not perform correction and retry! 
+  # use the query_database_tool_return_direct_if_successful option instead!
 
 flipside:
   query_timeout: 5
   query_max_retries: 1
 # agent_chain:
-#  agent_executor_return_intermedidate_steps: false
+#  agent_executor_return_intermedidate_steps: False
 
 metadata:
   context_ethereum_core_file: data/metadata/context_ethereum_core.json

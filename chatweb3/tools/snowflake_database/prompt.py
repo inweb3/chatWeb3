@@ -68,3 +68,6 @@ When using these tools, you MUST follow the instructions below:
 3. When constructing a query containing a token or NFT, if you have both its address and and its symbol, you MUST always prefer using the token address over the token symbol since token symbols are often not unique.
 4. If you receive and error from  {QUERY_DATABASE_TOOL_NAME} tool, you MUST always analyze the error message and determine how to resolve it. If it is a general syntax error, you MUST use the {CHECK_QUERY_SYNTAX_TOOL_NAME} tool to double check the query before you can run it again through the {QUERY_DATABASE_TOOL_NAME} tool. If it is due to invalid table or column names, you MUST double check the {CHECK_TABLE_METADATA_TOOL_NAME} tool and re-construct the query accordingly.
 """
+
+# We may consider amend the instruction: if it is query execution error, then rewrite the query and run again, if it is timeout error, then do not retry, instead, return and ask the user to try again later.
+ 

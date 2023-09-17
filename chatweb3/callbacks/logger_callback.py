@@ -97,7 +97,7 @@ class LoggerCallbackHandler(BaseCallbackHandler):
         logger.debug(f"Tool ended with {output=}")
         if llm_prefix is not None:
             # print_text(f"\n{llm_prefix}")
-            logger.debug(f"{llm_prefix=} is not None")
+            logger.debug(f"{llm_prefix=} is not None, continue")
 
     def on_tool_error(
         self, error: Union[Exception, KeyboardInterrupt], **kwargs: Any

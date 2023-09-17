@@ -1,3 +1,5 @@
+# path: chatweb3/agents/agent_toolkits/snowflake/toolkit_custom.py
+
 from typing import List, Optional
 
 from langchain.callbacks.base import Callbacks
@@ -16,6 +18,9 @@ from chatweb3.tools.snowflake_database.prompt import (
     SNOWFLAKE_QUERY_CHECKER,
     TOOLKIT_INSTRUCTIONS,
 )
+from chatweb3.tools.snowflake_database.tool import (
+    handle_tool_error,
+)
 from chatweb3.tools.snowflake_database.tool_custom import (
     CheckQuerySyntaxTool,
     CheckTableMetadataTool,
@@ -23,6 +28,9 @@ from chatweb3.tools.snowflake_database.tool_custom import (
     QueryDatabaseTool,
 )
 from config.config import agent_config
+from config.logging_config import get_logger
+
+logger = get_logger(__name__)
 
 # logfile = os.path.join(os.path.dirname(__file__), "logs", "agent.log")
 # logger.add(logfile, colorize=True, enqueue=True)
@@ -69,6 +77,11 @@ class CustomSnowflakeDatabaseToolkit(SnowflakeDatabaseToolkit):
             verbose=verbose,
         )
 
+        query_database_tool_return_direct = agent_config.get(
+            "tool.query_database_tool_return_direct"
+        )
+        # logger.debug(f"{query_database_tool_return_direct=}")
+
         return [
             CheckTableSummaryTool(
                 # db=self.db, callback_manager=callback_manager, verbose=verbose  # type: ignore[call-arg, arg-type]
@@ -93,11 +106,14 @@ class CustomSnowflakeDatabaseToolkit(SnowflakeDatabaseToolkit):
             ),
             QueryDatabaseTool(  # type: ignore[call-arg]
                 db=self.db,  # type: ignore[arg-type]
-                return_direct=agent_config.get(
-                    "tool.query_database_tool_return_direct"
-                ),
+                return_direct=query_database_tool_return_direct,
+                # return_direct=agent_config.get(
+                #     "tool.query_database_tool_return_direct"
+                # ),
                 # callback_manager=callback_manager,
                 callbacks=callbacks,
                 verbose=verbose,
+                handle_tool_error=True
+                # handle_tool_error=handle_tool_error,
             ),
         ]

@@ -32,13 +32,14 @@ from chatweb3.tools.snowflake_database.prompt import SNOWFLAKE_QUERY_CHECKER
 from chatweb3.utils import parse_table_long_name_to_json_list  # parse_str_to_dict
 from config.config import agent_config
 from config.logging_config import get_logger
+from langchain.tools.base import ToolException
 
-# from flipside.errors import (
-#     QueryRunCancelledError,
-#     QueryRunExecutionError,
-#     QueryRunTimeoutError,
-#     SDKError,
-# )
+from flipside.errors import (
+    QueryRunCancelledError,
+    QueryRunExecutionError,
+    QueryRunTimeoutError,
+    SDKError,
+)
 
 logger = get_logger(__name__)
 # logger = get_logger(
@@ -57,6 +58,27 @@ DEFAULT_SCHEMA = agent_config.get("database.default_schema")
 
 FLIPSIDE_QUERY_TIMEOUT = agent_config.get("flipside.query_timeout")
 FLIPSIDE_QUERY_MAX_RETRIES = agent_config.get("flipside.query_max_retries")
+QUERY_DATABASE_TOOL_RETURN_DIRECT_IF_SUCCESSFUL = agent_config.get(
+    "tool.query_database_tool_return_direct_if_successful"
+)  # noqa E501
+
+
+def handle_tool_error(error: ToolException) -> str:
+    if isinstance(error, QueryRunTimeoutError):
+        raise (
+            Exception(
+                "Query timed out. The Flipside database may be temporarily unavailable. Please try again later"
+            )
+        )  # noqa E501
+        # return (
+        #     "Query timed out. The database may be temporarily unavailable. Please try again later"
+        # )
+    else:
+        return (
+            "Error during tool execution:"
+            + error.args[0]
+            + "Please check what you should do next."
+        )
 
 
 class ListSnowflakeDatabaseTableNamesToolInput(BaseToolInput):
@@ -391,19 +413,72 @@ class QuerySnowflakeDatabaseTool(QuerySQLDataBaseTool):
                         query, timeout_minutes=FLIPSIDE_QUERY_TIMEOUT
                     )
                     result_flipside = result_set.rows
-                    logger.debug(f"Flipside query attempt {i+1}: {result_set.rows=}")
-                    break
-                except AttributeError as e:
-                    if "FLIPSIDE_API_KEY" in str(e):
-                        raise Exception(
-                            "Flipside query error. Please double check whether \
-                                your FLIPSIDE_API_KEY environmental variable \
-                                is set correctly."
+                    logger.debug(
+                        f"Flipside query attempt {i+1} successful: \
+                                  {result_set.rows=}"
+                    )
+
+                    logger.debug(f"{self.return_direct=}")
+                    # enable return_direct if the query was successful
+
+                    if (
+                        QUERY_DATABASE_TOOL_RETURN_DIRECT_IF_SUCCESSFUL
+                        and not self.return_direct
+                    ):
+                        self.return_direct = True
+                        logger.debug(f"Updated {self.return_direct=}")
+
+                    break  # Exit the loop if the query was successful
+
+                except QueryRunTimeoutError as e:
+                    logger.warning(
+                        f"Flipside query attempt {i+1} timed out {e}. \
+                                   Retrying..."
+                    )
+                    if i == FLIPSIDE_QUERY_MAX_RETRIES - 1:
+                        logger.error(
+                            f"All query attempts resulted in timeouts. \
+                                     Raising exception. {str(e)}"
                         )
-                    else:
-                        result_flipside = [f"Flipside query attempt {i+1} error: {e}"]
+                        raise ToolException(
+                            f"All query timeout retries exhausted, {str(e)}"
+                        )  # Re-raise the exception after all retries are exhausted
+
                 except Exception as e:
-                    result_flipside = [f"Flipside query attempt {i+1} error: {e}"]
+                    logger.error(f"Flipside query attempt failed due to: {e}")
+                    raise ToolException(str(e))
+
+            # for i in range(FLIPSIDE_QUERY_MAX_RETRIES):
+            #     # try:
+            #     result_set = self.db.flipside.query(
+            #         query, timeout_minutes=FLIPSIDE_QUERY_TIMEOUT
+            #     )
+            #     result_flipside = result_set.rows
+            #     # logger.debug(f"Flipside query: {result_set.rows=}")
+            #     logger.debug(f"Flipside query attempt {i+1}: {result_set.rows=}")
+            #     break
+            # except AttributeError as e:
+            #     if "FLIPSIDE_API_KEY" in str(e):
+            #         raise Exception(
+            #             "Flipside query error. Please double check whether \
+            #                 your FLIPSIDE_API_KEY environmental variable \
+            #                 is set correctly."
+            #         )
+            #     else:
+            #     raise Exception(
+            #         f"Flipside query error: {e}"
+            #     )
+            #         result_flipside = [
+            #             f"AttributeError: Flipside query attempt {i+1} error: {e}"
+            #         ]
+            # except Exception as e:
+            #     logger.debug(f"Flipside query attempt {i+1}: error: {e}")
+            #     raise Exception(
+            #         f"Flipside query error: {e}"
+            #     )
+            # result_flipside = [
+            #     f"Exception: Flipside query attempt {i+1} error: {e}"
+            # ]
             return result_flipside
 
         if mode == "snowflake":

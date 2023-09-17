@@ -65,8 +65,8 @@ QUERY_DATABASE_TOOL_TOP_K = agent_config.get("tool.query_database_tool_top_k")
 
 # agent_executor_kwargs = {"handle_parsing_errors": True}
 agent_executor_kwargs = {
-    "handle_parsing_errors": "Unable to parse output. Check your output format and make sure it conforms!"
-}
+    "handle_parsing_errors": "Unable to parse output. Check your output format, especially when a valid $JSON_BLOB enclosed in triple backtick is required, make sure your output conforms!"
+}  # noqa: E501
 
 
 def create_agent_executor(conversation_mode=False):

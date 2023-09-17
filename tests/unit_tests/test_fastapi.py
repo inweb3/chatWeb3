@@ -3,13 +3,13 @@ from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
-from api.fastapi import CryptoDataError, app
+from api.api_endpoints import CryptoDataError, app
 from api.services.crypto_data import query_crypto_data_from_flipside
 
 client = TestClient(app)
 
 
-@patch("api.fastapi.query_crypto_data_from_flipside")
+@patch("api.api_endpoints.query_crypto_data_from_flipside")
 def test_query_chatweb3_success(mock_query):
     mock_query.return_value = ("Answer", "Thought Process")
     response = client.post("/query_crypto_data", json={"string": "Some Input"})
@@ -17,7 +17,7 @@ def test_query_chatweb3_success(mock_query):
     assert response.json() == {"answer": "Answer", "thought_process": "Thought Process"}
 
 
-@patch("api.fastapi.query_crypto_data_from_flipside")
+@patch("api.api_endpoints.query_crypto_data_from_flipside")
 def test_query_chatweb3_crypto_data_error(mock_query):
     mock_query.side_effect = CryptoDataError("Crypto Data Error", "Some Error")
     response = client.post("/query_crypto_data", json={"string": "Some Input"})
@@ -25,7 +25,7 @@ def test_query_chatweb3_crypto_data_error(mock_query):
     assert "error" in response.json()
 
 
-@patch("api.fastapi.query_crypto_data_from_flipside")
+@patch("api.api_endpoints.query_crypto_data_from_flipside")
 def test_query_chatweb3_internal_error(mock_query):
     mock_query.side_effect = Exception("Unexpected Error")
     response = client.post("/query_crypto_data", json={"string": "Some Input"})

@@ -1,5 +1,5 @@
 """
-config.py
+path: config/config.py
 This file contains the configuration for the chatbot application.
 """
 import os
@@ -17,9 +17,9 @@ class Config:
         self.config["proj_root_dir"] = os.path.dirname(
             os.path.dirname(os.path.abspath(__file__))
         )
-        self.config["tool"]["query_database_tool_return_direct"] = (
-            True if self.config["tool"]["query_database_tool_top_k"] > 10 else False
-        )
+        # self.config["tool"]["query_database_tool_return_direct"] = (
+        #     True if self.config["tool"]["query_database_tool_top_k"] > 10 else False
+        # )
 
         # Load from environment variables
         self.config["snowflake_params"] = {
