@@ -64,11 +64,21 @@ QUERY_DATABASE_TOOL_RETURN_DIRECT_IF_SUCCESSFUL = agent_config.get(
 
 
 def handle_tool_error(error: ToolException) -> str:
-    return (
-        "Error during tool execution:"
-        + error.args[0]
-        + "Please check what you should do next."
-    )
+    if isinstance(error, QueryRunTimeoutError):
+        raise (
+            Exception(
+                "Query timed out. The Flipside database may be temporarily unavailable. Please try again later"
+            )
+        )  # noqa E501
+        # return (
+        #     "Query timed out. The database may be temporarily unavailable. Please try again later"
+        # )
+    else:
+        return (
+            "Error during tool execution:"
+            + error.args[0]
+            + "Please check what you should do next."
+        )
 
 
 class ListSnowflakeDatabaseTableNamesToolInput(BaseToolInput):

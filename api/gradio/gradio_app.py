@@ -117,7 +117,7 @@ def format_observation(observation, mode="string"):
     # return formatted_observation.replace("*Observation*: ", "")
 
 
-def format_response(response: dict, mode: str = "string") -> str:
+def format_response(response: dict, mode: str = "string") -> tuple:
     formatted_steps = []
     for i, step in enumerate(response["intermediate_steps"], start=1):
         # print(f"{i=}, {step=}")
@@ -150,7 +150,28 @@ def format_response(response: dict, mode: str = "string") -> str:
         formatted_output += f"\n\n**Final answer**: {response['output']}"
         # print(f"{formatted_output=}")
 
-    return formatted_output
+    # return formatted_output
+    query = ""
+    # Extract the last AgentAction from the intermediate_steps
+    last_step = response["intermediate_steps"][-1]
+    last_agent_action = None
+    for step_item in last_step:
+        if isinstance(step_item, AgentAction):
+            last_agent_action = step_item
+            break
+
+    # # Extract the query from the last AgentAction
+    # if last_agent_action:
+    #     query = last_agent_action.tool_input.get("query", "")
+
+    # Extract the query from the last AgentAction
+    if last_agent_action:
+        if isinstance(last_agent_action.tool_input, dict):
+            query = last_agent_action.tool_input.get("query", "")
+        elif isinstance(last_agent_action.tool_input, str):
+            query = last_agent_action.tool_input
+
+    return formatted_output, query
 
 
 def chat(inp, history, agent):
@@ -190,8 +211,15 @@ def chat(inp, history, agent):
             response = agent(inp)
             try:
                 answer = str(response["output"])
+                logger.debug(f"output: {answer}")
+                # thought_process_text = format_response(response)
+                thought_process_text, extracted_query = format_response(response)
+
+                # Append the extracted query to the answer
+                if extracted_query:
+                    answer += f"\n\nThe original SQL query used is:\n```\n{extracted_query}\n```"
+
                 logger.debug(f"answer: {answer}")
-                thought_process_text = format_response(response)
                 history.append((inp, answer))
             except Exception as e:
                 logger.error(
