@@ -42,7 +42,7 @@ class ChatWeb3QueryRequest(BaseModel):
 
 @app.post("/query_blockchain_data", include_in_schema=True)
 async def query_chatweb3(data: ChatWeb3QueryRequest, request: Request):
-    """Query blockchain data using a natural English language query 
+    """Query blockchain data using a natural English language query
     and get the answer as well as the thought process
     """
     try:
