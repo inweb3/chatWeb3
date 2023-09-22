@@ -28,7 +28,7 @@ CONVERSATION_MODE = agent_config.get("agent.conversational_chat")
 agent = create_agent_executor(conversation_mode=CONVERSATION_MODE)
 
 
-class CryptoDataError(Exception):
+class BlockchainDataError(Exception):
     def __init__(self, name, message):
         self.name = name
         self.message = message
@@ -48,4 +48,4 @@ def query_blockchain_data_from_flipside(inp: str) -> str:
             )
         return answer, thought_process
     except Exception as e:
-        raise CryptoDataError(name="Blockchain Data Retrival Error", message=str(e))
+        raise BlockchainDataError(name="Blockchain Data Retrival Error", message=str(e))

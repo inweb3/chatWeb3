@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 
 from api.services.blockchain_data import (
-    CryptoDataError,
+    BlockchainDataError,
     query_blockchain_data_from_flipside,
 )
 
@@ -29,5 +29,5 @@ def test_query_blockchain_data_failure(mock_agent):
     mock_agent.side_effect = Exception("Some Error")
     try:
         query_blockchain_data_from_flipside("Some Input")
-    except CryptoDataError as e:
+    except BlockchainDataError as e:
         assert str(e) == "Some Error"

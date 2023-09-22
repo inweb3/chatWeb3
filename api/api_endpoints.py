@@ -1,6 +1,4 @@
-# This is the main file for your FastAPI app.
-# You can add your endpoints here.
-# Path: api/fastapi.py
+# Path: api/api_endpoints.py
 from fastapi import FastAPI, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -8,7 +6,7 @@ from pydantic import BaseModel, Field
 
 from api.routers.well_known import get_ai_plugin, get_host, well_known
 from api.services.blockchain_data import (
-    CryptoDataError,
+    BlockchainDataError,
     query_blockchain_data_from_flipside,
 )
 
@@ -45,7 +43,7 @@ async def query_chatweb3(data: ChatWeb3QueryRequest, request: Request):
     try:
         answer, thought_process = query_blockchain_data_from_flipside(data.query)
         return {"answer": answer, "thought_process": thought_process}
-    except CryptoDataError as e:
+    except BlockchainDataError as e:
         return JSONResponse(status_code=400, content={"error": str(e)})
     except Exception as e:
         return JSONResponse(
@@ -53,8 +51,8 @@ async def query_chatweb3(data: ChatWeb3QueryRequest, request: Request):
         )
 
 
-@app.exception_handler(CryptoDataError)
-async def unicorn_exception_handler(request: Request, exc: CryptoDataError):
+@app.exception_handler(BlockchainDataError)
+async def unicorn_exception_handler(request: Request, exc: BlockchainDataError):
     return JSONResponse(
         status_code=400,
         content={"message": f"Oops! {exc.name} did something. There goes a rainbow..."},
