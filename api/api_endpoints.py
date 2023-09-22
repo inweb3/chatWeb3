@@ -18,14 +18,13 @@ app = FastAPI(
     version="0.1.0",
 )
 
-origins = [
-    "http://localhost:3000",
-    "https://chat.openai.com",
-]
+# origins = [
+#     "https://chat.openai.com",
+# ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["https://chat.openai.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -35,11 +34,17 @@ app.include_router(well_known)
 
 
 class ChatWeb3QueryRequest(BaseModel):
-    query: str
+    query: str = Field(
+        ...,
+        description="A natural English language query to query blockchain data",
+    )
 
 
-@app.post("/query_blockchain_data")
+@app.post("/query_blockchain_data", include_in_schema=True)
 async def query_chatweb3(data: ChatWeb3QueryRequest, request: Request):
+    """Query blockchain data using a natural English language query 
+    and get the answer as well as the thought process
+    """
     try:
         answer, thought_process = query_blockchain_data_from_flipside(data.query)
         return {"answer": answer, "thought_process": thought_process}
