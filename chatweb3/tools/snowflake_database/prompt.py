@@ -70,4 +70,3 @@ When using these tools, you MUST follow the instructions below:
 """
 
 # We may consider amend the instruction: if it is query execution error, then rewrite the query and run again, if it is timeout error, then do not retry, instead, return and ask the user to try again later.
- 

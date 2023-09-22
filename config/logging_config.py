@@ -139,7 +139,7 @@ def _get_log_file_path(config_path=None):
     log_file_name = f"{project_name}.log"
     log_file_path = os.path.join(log_directory, log_file_name)
 
-    print(f"Log file path determined as: {log_file_path}")  # Debug print statement
+    # print(f"Log file path determined as: {log_file_path}")  # Debug print statement
 
     return log_file_path
 
@@ -155,6 +155,7 @@ def get_logger(
 ):
     config = load_config()
     logger = logging.getLogger(name)
+    # avoid relaoding the logger if it already has handlers
     # if logger.handlers:
     #     return CustomLoggerAdapter(logger, {})
 
