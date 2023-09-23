@@ -35,11 +35,11 @@ def load_config():
             raise ValueError(
                 f"ENV value '{env}' is not set to one of the acceptable values: {', '.join(acceptable_envs)}"
             )
-        else:
-            print(f"ENV is set to: {env}")
+        # else:
+        #     print(f"ENV is set to: {env}")
     else:
         env = "default"
-        print(f"ENV is not set, using default: {env}")
+        # print(f"ENV is not set, using default: {env}")
 
     # env = os.environ.get("ENV", "default")
 
@@ -106,7 +106,7 @@ def _configure_handlers(
 
     if log_to_file:
         # print(f"Trying to create or open log file at: {log_file_path}")
-        print(f"{log_file_path=}, set up its file handler")  # Debug print statement
+        # print(f"{log_file_path=}, set up its file handler")  # Debug print statement
         file_handler = logging.FileHandler(log_file_path)
         file_handler.setLevel(log_level)
         file_handler.setFormatter(logging.Formatter(log_format, datefmt=date_format))
