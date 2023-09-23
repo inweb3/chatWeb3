@@ -94,6 +94,7 @@ def _configure_handlers(
         handlers.append(console_handler)
 
     if log_to_file:
+        print(f"Trying to create or open log file at: {log_file_path}")
         file_handler = logging.FileHandler(log_file_path)
         file_handler.setLevel(log_level)
         file_handler.setFormatter(logging.Formatter(log_format, datefmt=date_format))
@@ -140,7 +141,9 @@ def _get_log_file_path(config_path=None):
     log_file_path = os.path.join(log_directory, log_file_name)
 
     try:
+        print(f"Trying to create logs directory at: {log_directory}")
         os.makedirs(log_directory, exist_ok=True)
+        print(f"Successfully created or found logs directory at: {log_directory}")
     except Exception as e:
         raise RuntimeError(f"Failed to create logs directory at {log_directory}. \
                            Error: {e}")
