@@ -139,6 +139,12 @@ def _get_log_file_path(config_path=None):
     log_file_name = f"{project_name}.log"
     log_file_path = os.path.join(log_directory, log_file_name)
 
+    try:
+        os.makedirs(log_directory, exist_ok=True)
+    except Exception as e:
+        raise RuntimeError(f"Failed to create logs directory at {log_directory}. \
+                           Error: {e}")
+
     # print(f"Log file path determined as: {log_file_path}")  # Debug print statement
 
     return log_file_path
