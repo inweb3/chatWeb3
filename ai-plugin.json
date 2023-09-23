@@ -6,7 +6,10 @@
   "description_for_model": "Chat-based service for blockchain, crypto and Web3 related data analysis, powered by GPT. Ask questions about blockchain, crypto and Web3 related data in natural English language. Do NOT translate the questions into SQL or other query languages. Just ask questions in natural English language. The service will automatically translate the questions into SQL or other query languages and get answers for you.",
   "auth": {
     "type": "service_http",
-    "authorization_type": "bearer"
+    "authorization_type": "bearer",
+    "verification_tokens": {
+      "openai": "a99da7163abe4236a22fbe7f8ecb5266"
+    }
   },
   "api": {
     "type": "openapi",
