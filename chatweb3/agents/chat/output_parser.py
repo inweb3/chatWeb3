@@ -1,3 +1,5 @@
+# Description: This file contains the output parser for the chat agent.
+# Path: chatweb3/agents/chat/output_parser.py
 from langchain.agents.chat.output_parser import ChatOutputParser, FINAL_ANSWER_ACTION
 import json
 import re
@@ -16,46 +18,28 @@ class ChatWeb3ChatOutputParser(ChatOutputParser):
     def parse(self, text: str) -> Union[AgentAction, AgentFinish]:
         includes_answer = FINAL_ANSWER_ACTION in text
 
-        # 1. Try the default behavior
-        try:
-            found = self.pattern.search(text)
-            if not found:
-                raise ValueError("action not found")
-            action = found.group(1)
-            response = json.loads(action.strip())
-            includes_action = "action" in response
-            if includes_answer and includes_action:
-                raise OutputParserException(
-                    "Parsing LLM output produced a final answer "
-                    f"and a parse-able action: {text}"
-                )
-            return AgentAction(
-                response["action"], response.get("action_input", {}), text
-            )
-        except JSONDecodeError:
-            # 2. Check for multiple enclosures
-            all_matches = re.findall(r"`{3}(?:json)?\n(.*?)`{3}", text, re.DOTALL)
-            if len(all_matches) > 1:
-                # 3. Specific capture after "Action:"
-                action_pattern = re.compile(
-                    r"Action:.*?`{3}(?:json)?\n(.*?)`{3}", re.DOTALL
-                )  # noqa E501
-                found = action_pattern.search(text)
-                if found:
-                    try:
-                        action = found.group(1)
-                        response = json.loads(action.strip())
-                        return AgentAction(
-                            response["action"], response.get("action_input", {}), text
-                        )
-                    except JSONDecodeError:
-                        # If still can't parse, raise an error
-                        raise OutputParserException(
-                            f"Could not parse LLM output after Action: {text}"
-                        )
+        # List of patterns to try in order
+        patterns = [
+            r"Action:.*?`{3}(?:json)?\s*(.*?)\s*`{3}",  # with Action: and backticks
+            r"`{3}(?:json)?\s*(.*?)\s*`{3}",  # just the backticks
+            r"({\s*\"action\".*?})",  # any JSON-like block
+        ]
 
-        except Exception:
-            if not includes_answer:
-                raise OutputParserException(f"Could not parse LLM output: {text}")
-            output = text.split(FINAL_ANSWER_ACTION)[-1].strip()
-            return AgentFinish({"output": output}, text)
+        for pattern in patterns:
+            found = re.search(pattern, text, re.DOTALL)
+            if found:
+                try:
+                    action = found.group(1)
+                    response = json.loads(action)
+                    return AgentAction(
+                        response["action"], response.get("action_input", {}), text
+                    )
+                except JSONDecodeError:
+                    # If this pattern fails, we continue to the next pattern
+                    continue
+
+        # If none of the patterns matched and parsed correctly, we handle it as before
+        if not includes_answer:
+            raise OutputParserException(f"Could not parse LLM output: {text}")
+        output = text.split(FINAL_ANSWER_ACTION)[-1].strip()
+        return AgentFinish({"output": output}, text)
