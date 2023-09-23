@@ -22,24 +22,33 @@ def load_config():
     except Exception as e:
         raise RuntimeError(f"Failed to load the logger configuration: {e}")
 
+    # Extract logging configurations
+    logging_config = full_config.get("logging", {})
+    # print(f"Logging config: {logging_config}")
+
     # if ENV is set, print its value
     env = os.environ.get("ENV")
+
+    acceptable_envs = set(logging_config.keys())
     if env:
-        print(f"ENV is set to: {env}")
+        if env not in acceptable_envs:
+            raise ValueError(f"ENV value '{env}' is not set to one of the acceptable values: {', '.join(acceptable_envs)}")
+        else:
+            print(f"ENV is set to: {env}")
     else:
         env = "default"
+        print(f"ENV is not set, using default: {env}")
 
     # env = os.environ.get("ENV", "default")
 
-    # Extract logging configurations
-    logging_config = full_config.get("logging", {})
-    env_config = logging_config.get(env, {})
-    default_config = logging_config.get("default", {})
-
     # This updates the env_config dictionary with values from default_config,
     # but only for keys that are missing in env_config.
+    env_config = logging_config.get(env, {})
+    # print(f"Logging config for ENV={env}: {env_config}")
+    default_config = logging_config.get("default", {})
+    # print(f"Default logging config: {default_config}")
     final_config = {**default_config, **env_config}
-    # print(f"Loading config for ENV={env}: {final_config}")  # Add this print statement
+    print(f"Final config for ENV={env}: {final_config}")  # Add this print statement
     return final_config
 
 
@@ -94,7 +103,8 @@ def _configure_handlers(
         handlers.append(console_handler)
 
     if log_to_file:
-        print(f"Trying to create or open log file at: {log_file_path}")
+        # print(f"Trying to create or open log file at: {log_file_path}")
+        print(f"{log_file_path=}, set up its file handler")  # Debug print statement
         file_handler = logging.FileHandler(log_file_path)
         file_handler.setLevel(log_level)
         file_handler.setFormatter(logging.Formatter(log_format, datefmt=date_format))
@@ -117,40 +127,47 @@ def _find_project_root(start_path):
 
 
 def _get_log_file_path(config_path=None):
-    # Find the project root by looking for the .projectroot file
+    # print(f"_get_log_file_path called with config_path: {config_path}")
+
     project_root = _find_project_root(os.path.abspath(__file__))
 
-    # If a config_path is provided, check if it's relative or absolute
     if config_path:
+        # If a config_path is provided, check if it's relative or absolute
         if os.path.isabs(config_path):
-            return config_path
+            log_file_path = config_path
         else:
-            return os.path.join(project_root, config_path)
+            log_file_path = os.path.join(project_root, config_path)
+        # print(f"Received Log file path from config as: {log_file_path}")
 
-    # Define the path for the log directory
-    log_directory = os.path.join(project_root, "logs")
-    if not os.path.exists(log_directory):
-        # print(f"Creating logs directory at: {log_directory}")  # Debug print statement
-        os.makedirs(log_directory, exist_ok=True)
+    else:
+        # Define the path for the log directory
+        log_directory = os.path.join(project_root, "logs")
 
-    # Determine the project name from the project_root path
-    project_name = os.path.basename(project_root)
+        # Determine the project name from the project_root path
+        project_name = os.path.basename(project_root)
 
-    # Define the log file name and path
-    log_file_name = f"{project_name}.log"
-    log_file_path = os.path.join(log_directory, log_file_name)
+        # Define the log file name and path
+        log_file_name = f"{project_name}.log"
+        log_file_path = os.path.join(log_directory, log_file_name)
 
+        # print(f"Set Log file path to default as: {log_file_path}")
+
+    # Make sure the directory of the log_file_path exists
+    log_directory = os.path.dirname(log_file_path)  # Extract directory from the log_file_path
     try:
-        print(f"Trying to create logs directory at: {log_directory}")
         os.makedirs(log_directory, exist_ok=True)
-        print(f"Successfully created or found logs directory at: {log_directory}")
+        # print(f"Successfully created or found logs directory at: {log_directory}")
     except Exception as e:
         raise RuntimeError(f"Failed to create logs directory at {log_directory}. \
                            Error: {e}")
 
+    # Ensure the log file itself exists
+    open(log_file_path, 'a').close()
+
     # print(f"Log file path determined as: {log_file_path}")  # Debug print statement
 
     return log_file_path
+
 
 
 def get_logger(
@@ -209,8 +226,7 @@ def initialize_root_logger():
     log_to_file = config["log_to_file"]
     log_format = config["log_format"]
     date_format = config["date_format"]
-    log_file_path = config.get("log_file_path", _get_log_file_path())
-
+    # log_file_path = config.get("log_file_path", _get_log_file_path())
     # Always pass the log_file_path from config to _get_log_file_path
     log_file_path = _get_log_file_path(config.get("log_file_path"))
 
@@ -238,3 +254,46 @@ def initialize_root_logger():
     # check if log_levl is DEBUG, if so, print the config
     if log_level == logging.DEBUG:
         print(f"Initializing root logger with config: {config}")
+
+# def _get_log_file_path(config_path=None):
+#     print(f"_get_log_file_path called with config_path: {config_path}")
+
+#     project_root = _find_project_root(os.path.abspath(__file__))
+
+#     if config_path:
+#         # If a config_path is provided, check if it's relative or absolute
+#         if os.path.isabs(config_path):
+#             # make sure it exists
+#             log_file_path = config_path
+#         else:
+#             log_file_path = os.path.join(project_root, config_path)
+#         print(f"Received Log file path from config as: {log_file_path}")
+
+
+#     else:
+#         # Define the path for the log directory
+#         log_directory = os.path.join(project_root, "logs")
+#         if not os.path.exists(log_directory):
+#             # print(f"Creating logs directory at: {log_directory}")
+#             os.makedirs(log_directory, exist_ok=True)
+
+#         # Determine the project name from the project_root path
+#         project_name = os.path.basename(project_root)
+
+#         # Define the log file name and path
+#         log_file_name = f"{project_name}.log"
+#         log_file_path = os.path.join(log_directory, log_file_name)
+
+#         print(f"Set Log file path to default as: {log_file_path}")
+
+#     # make sure the logs directory exists
+#     try:
+#         os.makedirs(log_directory, exist_ok=True)
+#         print(f"Successfully created or found logs directory at: {log_directory}")
+#     except Exception as e:
+#         raise RuntimeError(f"Failed to create logs directory at {log_directory}. \
+#                            Error: {e}")
+
+#     # print(f"Log file path determined as: {log_file_path}")  # Debug print statement
+
+#    return log_file_path
