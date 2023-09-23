@@ -39,6 +39,12 @@ This command will run the ChatWeb3 gradio app. If you prefer to run it as a fast
 poetry run chatweb3 --interface fastapi
 ```
 
+Alternatively, we can start the fastapi server by
+
+```
+uvicorn api.api_endpoints:app --reload
+```
+
 ## Test
 
 To run tests:
