@@ -5,7 +5,7 @@
   "description_for_human": "ChatGPT for Blockchain and Web3 Data Analysis",
   "description_for_model": "Chat-based service for blockchain, crypto and Web3 related data analysis, powered by GPT. Ask questions about blockchain, crypto and Web3 related data in natural English language. Do NOT translate the questions into SQL or other query languages. Just ask questions in natural English language. The service will automatically translate the questions into SQL or other query languages and get answers for you.",
   "auth": {
-    "type": "none"
+    "type": "service_http"
   },
   "api": {
     "type": "openapi",
