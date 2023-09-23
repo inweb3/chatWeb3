@@ -8,7 +8,7 @@
     "type": "service_http",
     "authorization_type": "bearer",
     "verification_tokens": {
-      "openai": "a99da7163abe4236a22fbe7f8ecb5266"
+      "openai": "fdbcc9a57d4e4173b3c6fa15051bd620"
     }
   },
   "api": {
