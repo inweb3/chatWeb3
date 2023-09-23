@@ -32,7 +32,9 @@ def load_config():
     acceptable_envs = set(logging_config.keys())
     if env:
         if env not in acceptable_envs:
-            raise ValueError(f"ENV value '{env}' is not set to one of the acceptable values: {', '.join(acceptable_envs)}")
+            raise ValueError(
+                f"ENV value '{env}' is not set to one of the acceptable values: {', '.join(acceptable_envs)}"
+            )
         else:
             print(f"ENV is set to: {env}")
     else:
@@ -153,21 +155,24 @@ def _get_log_file_path(config_path=None):
         # print(f"Set Log file path to default as: {log_file_path}")
 
     # Make sure the directory of the log_file_path exists
-    log_directory = os.path.dirname(log_file_path)  # Extract directory from the log_file_path
+    log_directory = os.path.dirname(
+        log_file_path
+    )  # Extract directory from the log_file_path
     try:
         os.makedirs(log_directory, exist_ok=True)
         # print(f"Successfully created or found logs directory at: {log_directory}")
     except Exception as e:
-        raise RuntimeError(f"Failed to create logs directory at {log_directory}. \
-                           Error: {e}")
+        raise RuntimeError(
+            f"Failed to create logs directory at {log_directory}. \
+                           Error: {e}"
+        )
 
     # Ensure the log file itself exists
-    open(log_file_path, 'a').close()
+    open(log_file_path, "a").close()
 
     # print(f"Log file path determined as: {log_file_path}")  # Debug print statement
 
     return log_file_path
-
 
 
 def get_logger(
