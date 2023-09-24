@@ -1,4 +1,4 @@
-# ChatWeb3 - ChatGPT for blockchain and crypto data analysis
+# ChatWeb3 - Harnessing ChatGPT for blockchain and crypto data analysis
 
 More details about this application prototype is available at: 
 
