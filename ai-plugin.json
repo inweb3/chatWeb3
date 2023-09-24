@@ -2,8 +2,8 @@
   "schema_version": "v1",
   "name_for_human": "ChatWeb3",
   "name_for_model": "ChatWeb3",
-  "description_for_human": "InWeb3's ChatGPT plugin for Blockchain, Crypto and Web3 Data Analysis, powered by OpenAI, Langchain and Flipsidecrypto.",
-  "description_for_model": "Chat-based service for blockchain, crypto and Web3 related data analysis. Just ask those questions in natural English language, the service will translate the questions into SQL or other query languages and get answers for you.",
+  "description_for_human": "Query and analyze blockchain and crypto data using natural language.",
+  "description_for_model": "Chat-based service for blockchain and crypto related data analysis. Ask those questions in natural English language, the service will look for blockchain database tables, construct SQL queries, and retrieve answers for you.",
   "auth": {
     "type": "service_http",
     "authorization_type": "bearer",
@@ -18,5 +18,5 @@
   },
   "logo_url": "$host/.well-known/logo.png",
   "contact_email": "info@inWeb3.com",
-  "legal_info_url": "https://inWeb3.com/privacy"
+  "legal_info_url": "https://inWeb3.com/chatweb3"
 }
