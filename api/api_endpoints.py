@@ -8,10 +8,6 @@ from config.logging_config import get_logger
 from dotenv import load_dotenv
 
 from api.routers.well_known import get_ai_plugin, get_host, well_known
-from api.services.blockchain_data import (
-    BlockchainDataError,
-    query_blockchain_data_from_flipside,
-)
 
 # Importing the required tools from tool_custom.py
 from chatweb3.tools.snowflake_database.tool_custom import (
@@ -21,17 +17,7 @@ from chatweb3.tools.snowflake_database.tool_custom import (
     QueryDatabaseTool,
 )
 from chatweb3.create_agent import get_snowflake_container
-from chatweb3.tools.snowflake_database.prompt import (
-    SNOWFLAKE_QUERY_CHECKER,
-)
-from langchain.chat_models import ChatOpenAI
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    HumanMessagePromptTemplate,
-    SystemMessagePromptTemplate,
-)
 from config.config import agent_config
-
 
 
 logger = get_logger(__name__)
@@ -83,7 +69,6 @@ async def general_exception_handler(request: Request, exc: Exception):
         status_code=500,
         content={"error": "Internal server error"},
     )
-
 
 
 # Endpoint: Get List of Available Tables
@@ -140,10 +125,6 @@ def start():
     uvicorn.run("api.api_endpoints:app", host="localhost", port=8000, reload=True)
 
 
-
-
-
-
 # class ChatWeb3QueryRequest(BaseModel):
 #     query: str = Field(
 #         ...,
@@ -180,8 +161,8 @@ def start():
 # async def check_snowflake_sql_query_syntax(query: SnowflakeQuery):
 #     try:
 #         template = SNOWFLAKE_QUERY_CHECKER
-#         llm = ChatOpenAI(temperature=0) 
-         
+#         llm = ChatOpenAI(temperature=0)
+
 #         messages = [
 #             SystemMessagePromptTemplate.from_template(template=SNOWFLAKE_QUERY_CHECKER),
 #             HumanMessagePromptTemplate.from_template(template="\n\n{query}"),
