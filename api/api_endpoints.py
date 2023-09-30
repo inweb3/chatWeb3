@@ -119,7 +119,7 @@ def start():
     uvicorn.run("api.api_endpoints:app", host="localhost", port=8000, reload=True)
 
 
-# uvicorn api.api_endpoints:app --reload 
+# uvicorn api.api_endpoints:app --reload
 
 # class ChatWeb3QueryRequest(BaseModel):
 #     query: str = Field(
