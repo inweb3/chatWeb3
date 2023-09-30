@@ -14,6 +14,7 @@ from dotenv import load_dotenv
 
 from chatweb3.create_agent import create_agent_executor
 from chatweb3.utils import format_response
+from config.config import Config
 from config.config import agent_config
 from config.logging_config import get_logger
 
@@ -28,6 +29,9 @@ logger = get_logger(__name__)
 load_dotenv()
 
 CONVERSATION_MODE = agent_config.get("agent.conversational_chat")
+
+Config.PLUGIN_MODE = False  # if we are running the UI we are not in plugin mode
+logger.debug(f"Set Config.PLUGIN_MODE={Config.PLUGIN_MODE}")
 
 
 def set_openai_api_key(api_key, agent):

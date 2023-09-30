@@ -8,6 +8,8 @@ from config.logging_config import get_logger
 from dotenv import load_dotenv
 
 from api.routers.well_known import get_ai_plugin, get_host, well_known
+from config.config import Config
+
 
 # Importing the required tools from tool_custom.py
 from chatweb3.tools.snowflake_database.tool_custom import (
@@ -19,6 +21,9 @@ from chatweb3.create_agent import get_snowflake_container
 
 
 logger = get_logger(__name__)
+
+Config.PLUGIN_MODE = True
+logger.debug(f"Set Config.PLUGIN_MODE={Config.PLUGIN_MODE}")
 
 
 db = get_snowflake_container()

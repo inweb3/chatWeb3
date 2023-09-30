@@ -49,6 +49,8 @@ from chatweb3.tools.snowflake_database.constants import (
     SELECT_SNOWFLAKE_DATABASE_SCHEMA_TOOL_NAME,
 )
 
+from config.config import Config
+
 logger = get_logger(__name__)
 # logger = get_logger(
 #     __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
@@ -143,9 +145,15 @@ class ListSnowflakeDatabaseTableNamesTool(ListSQLDatabaseTool):
         if mode not in ["local", "snowflake", "default"]:
             raise ValueError(f"Invalid mode: {mode}")
 
-        table_long_names_enabled_list = agent_config.get(
-            "ethereum_core_table_long_name.enabled_list"
-        )
+        if Config.PLUGIN_MODE:
+            # use the full table list if we are in plugin mode
+            table_long_names_enabled_list = agent_config.get(
+                "ethereum_core_table_long_name.full_list"
+            )
+        else:
+            table_long_names_enabled_list = agent_config.get(
+                "ethereum_core_table_long_name.enabled_list"
+            )
 
         table_long_names_enabled = ", ".join(table_long_names_enabled_list)
         include_column_names = False
