@@ -117,3 +117,36 @@ def start():
     import uvicorn
 
     uvicorn.run("api.api_endpoints:app", host="localhost", port=8000, reload=True)
+
+
+# uvicorn api.api_endpoints:app --reload 
+
+# class ChatWeb3QueryRequest(BaseModel):
+#     query: str = Field(
+#         ...,
+#         description="A natural English language query to query blockchain data",
+#     )
+
+
+# @app.post("/query_blockchain_data", include_in_schema=True)
+# async def query_chatweb3(data: ChatWeb3QueryRequest, request: Request):
+#     """Query blockchain data using a natural English language query
+#     and get the answer as well as the thought process
+#     """
+#     try:
+#         answer, thought_process = query_blockchain_data_from_flipside(data.query)
+#         return {"answer": answer, "thought_process": thought_process}
+#     except BlockchainDataError as e:
+#         return JSONResponse(status_code=400, content={"error": str(e)})
+#     except Exception as e:
+#         return JSONResponse(
+#             status_code=500, content={"error": "Internal server error" + str(e)}
+#         )
+
+
+# @app.exception_handler(BlockchainDataError)
+# async def unicorn_exception_handler(request: Request, exc: BlockchainDataError):
+#     return JSONResponse(
+#         status_code=400,
+#         content={"message": f"Oops! {exc.name} did something. There goes a rainbow..."},
+#     )
