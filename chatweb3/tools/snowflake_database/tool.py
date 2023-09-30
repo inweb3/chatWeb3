@@ -41,17 +41,26 @@ from flipside.errors import (
     SDKError,
 )
 
+from chatweb3.tools.snowflake_database.constants import (
+    LIST_SNOWFLAKE_DATABASE_TABLE_NAMES_TOOL_NAME,
+    GET_SNOWFLAKE_DATABASE_TABLE_METADATA_TOOL_NAME,
+    QUERY_SNOWFLAKE_DATABASE_TOOL_NAME,
+    SNOWFLAKE_QUERY_CHECKER_TOOL_NAME,
+    SELECT_SNOWFLAKE_DATABASE_SCHEMA_TOOL_NAME,
+)
+
 logger = get_logger(__name__)
 # logger = get_logger(
 #     __name__, log_level=logging.DEBUG, log_to_console=True, log_to_file=True
 # )
 
 
-LIST_SNOWFLAKE_DATABASE_TABLE_NAMES_TOOL_NAME = "list_snowflake_db_table_names"
-GET_SNOWFLAKE_DATABASE_TABLE_METADATA_TOOL_NAME = "get_snowflake_db_table_metadata"
-QUERY_SNOWFLAKE_DATABASE_TOOL_NAME = "query_snowflake_db"
-SNOWFLAKE_QUERY_CHECKER_TOOL_NAME = "snowflake_query_checker"
-SELECT_SNOWFLAKE_DATABASE_SCHEMA_TOOL_NAME = "select_snowflake_db_schema"
+# LIST_SNOWFLAKE_DATABASE_TABLE_NAMES_TOOL_NAME = "list_snowflake_db_table_names"
+# GET_SNOWFLAKE_DATABASE_TABLE_METADATA_TOOL_NAME = "get_snowflake_db_table_metadata"
+# QUERY_SNOWFLAKE_DATABASE_TOOL_NAME = "query_snowflake_db"
+# SNOWFLAKE_QUERY_CHECKER_TOOL_NAME = "snowflake_query_checker"
+# SELECT_SNOWFLAKE_DATABASE_SCHEMA_TOOL_NAME = "select_snowflake_db_schema"
+
 
 DEFAULT_DATABASE = agent_config.get("database.default_database")
 DEFAULT_SCHEMA = agent_config.get("database.default_schema")

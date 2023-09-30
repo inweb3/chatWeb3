@@ -69,6 +69,24 @@ agent_executor_kwargs = {
 }  # noqa: E501
 
 
+def get_snowflake_container():
+    container = SnowflakeContainer(
+        **agent_config.get("flipside_params")
+        if agent_config.get("flipside_params")
+        else {},
+        **agent_config.get("snowflake_params")
+        if agent_config.get("snowflake_params")
+        else {},
+        **agent_config.get("shroomdk_params")
+        if agent_config.get("shroomdk_params")
+        else {},
+        local_index_file_path=LOCAL_INDEX_FILE_PATH,
+        index_annotation_file_path=INDEX_ANNOTATION_FILE_PATH,
+        verbose=False,
+    )
+    return container
+
+
 def create_agent_executor(conversation_mode=False):
     """
     Creates and returns an agent executor.
@@ -87,20 +105,21 @@ def create_agent_executor(conversation_mode=False):
         verbose=True,
     )
 
-    snowflake_container_eth_core = SnowflakeContainer(
-        **agent_config.get("flipside_params")
-        if agent_config.get("flipside_params")
-        else {},
-        **agent_config.get("snowflake_params")
-        if agent_config.get("snowflake_params")
-        else {},
-        **agent_config.get("shroomdk_params")
-        if agent_config.get("shroomdk_params")
-        else {},
-        local_index_file_path=LOCAL_INDEX_FILE_PATH,
-        index_annotation_file_path=INDEX_ANNOTATION_FILE_PATH,
-        verbose=False,
-    )
+    snowflake_container_eth_core = get_snowflake_container()
+    # snowflake_container_eth_core = SnowflakeContainer(
+    #     **agent_config.get("flipside_params")
+    #     if agent_config.get("flipside_params")
+    #     else {},
+    #     **agent_config.get("snowflake_params")
+    #     if agent_config.get("snowflake_params")
+    #     else {},
+    #     **agent_config.get("shroomdk_params")
+    #     if agent_config.get("shroomdk_params")
+    #     else {},
+    #     local_index_file_path=LOCAL_INDEX_FILE_PATH,
+    #     index_annotation_file_path=INDEX_ANNOTATION_FILE_PATH,
+    #     verbose=False,
+    # )
 
     snowflake_toolkit = CustomSnowflakeDatabaseToolkit(
         db=snowflake_container_eth_core,

@@ -33,17 +33,7 @@ poetry install
 poetry run chatweb3
 ```
 
-This command will run the ChatWeb3 gradio app. If you prefer to run it as a fastapi service, you can use:
-
-```
-poetry run chatweb3 --interface fastapi
-```
-
-Alternatively, we can start the fastapi server by
-
-```
-uvicorn api.api_endpoints:app --reload
-```
+This command will run the ChatWeb3 gradio app. 
 
 ## Test
 

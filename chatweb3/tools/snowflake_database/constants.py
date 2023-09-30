@@ -1,0 +1,10 @@
+LIST_SNOWFLAKE_DATABASE_TABLE_NAMES_TOOL_NAME = "list_snowflake_db_table_names"
+GET_SNOWFLAKE_DATABASE_TABLE_METADATA_TOOL_NAME = "get_snowflake_db_table_metadata"
+QUERY_SNOWFLAKE_DATABASE_TOOL_NAME = "query_snowflake_db"
+SNOWFLAKE_QUERY_CHECKER_TOOL_NAME = "snowflake_query_checker"
+SELECT_SNOWFLAKE_DATABASE_SCHEMA_TOOL_NAME = "select_snowflake_db_schema"
+
+CHECK_TABLE_SUMMARY_TOOL_NAME = "check_available_tables_summary"
+CHECK_TABLE_METADATA_TOOL_NAME = "check_table_metadata_details"
+CHECK_QUERY_SYNTAX_TOOL_NAME = "check_snowflake_query_syntax"
+QUERY_DATABASE_TOOL_NAME = "query_snowflake_database"

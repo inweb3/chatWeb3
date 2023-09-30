@@ -284,3 +284,31 @@ class SnowflakeContainer:
             )
         except Exception as e:
             return f"Error snowflake container running {command=} on {database}.{schema}: {str(e)}"
+
+
+# class SnowflakeContainerProxy(SnowflakeContainer):
+#     def __init__(self, *args, **kwargs):
+#         """Initialize the proxy class, ignoring all arguments."""
+#         pass
+
+#     @property
+#     def flipside(self):
+#         """Placeholder property for flipside."""
+#         raise AttributeError("Flipside attribute is not available in proxy mode.")
+
+#     @property
+#     def shroomdk(self):
+#         """Placeholder property for shroomdk."""
+#         raise AttributeError("Shroomdk attribute is not available in proxy mode.")
+
+#     def _create_engine(self, database: str):
+#         """Placeholder method for creating an engine."""
+#         raise NotImplementedError("_create_engine is not available in proxy mode.")
+
+#     def get_database(self, database: str, schema: str):
+#         """Placeholder method for getting a database."""
+#         raise NotImplementedError("get_database is not available in proxy mode.")
+
+#     def run_no_throw(self, *args, **kwargs):
+#         """Placeholder method for running a command."""
+#         return "Running commands is not available in proxy mode."
