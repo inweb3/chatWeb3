@@ -11,6 +11,8 @@ load_dotenv()
 
 
 class Config:
+    PLUGIN_MODE = True  # whether we are running as chatgpt plugin mode or not
+
     def __init__(self, config_file):
         with open(config_file, "r") as f:
             self.config = yaml.safe_load(f)
