@@ -13,7 +13,7 @@ from api.routers.well_known import get_ai_plugin, get_host, well_known
 from chatweb3.tools.snowflake_database.tool_custom import (
     CheckTableSummaryTool,
     CheckTableMetadataTool,
-    CheckQuerySyntaxTool,
+    #    CheckQuerySyntaxTool,
     QueryDatabaseTool,
 )
 from chatweb3.create_agent import get_snowflake_container
