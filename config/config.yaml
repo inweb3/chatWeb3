@@ -37,11 +37,37 @@ metadata:
 
 ethereum_core_table_long_name:
   enabled_list:
-    - "ethereum.core.ez_dex_swaps"
+    - "ethereum.defi.ez_dex_swaps"
     - "ethereum.core.ez_current_balances"
     - "ethereum.core.ez_token_transfers"
     - "ethereum.core.dim_labels"
   full_list:
+    - "ethereum.defi.ez_dex_swaps"
+    - "ethereum.defi.dim_dex_liquidity_pools"
+    - "ethereum.nft.dim_nft_metadata"
+    - "ethereum.nft.ez_nft_mints"
+    - "ethereum.nft.ez_nft_sales"
+    - "ethereum.nft.ez_nft_transfers"
+    - "ethereum.core.dim_contract_abis"
+    - "ethereum.core.dim_contracts"
+    - "ethereum.core.dim_dates"
+    - "ethereum.core.dim_event_signatures"
+    - "ethereum.core.dim_function_signatures"
+    - "ethereum.core.dim_labels"
+    - "ethereum.core.ez_balance_deltas"
+    - "ethereum.core.ez_current_balances"
+    - "ethereum.core.ez_decoded_event_logs"
+    - "ethereum.core.ez_eth_transfers"
+    - "ethereum.core.ez_token_transfers"
+    - "ethereum.core.fact_blocks"
+    - "ethereum.core.fact_contract_reads"
+    - "ethereum.core.fact_decoded_event_logs"
+    - "ethereum.core.fact_eth_balances"
+    - "ethereum.core.fact_token_balances"
+    - "ethereum.core.fact_token_transfers"
+    - "ethereum.core.fact_traces"
+    - "ethereum.core.fact_transactions"
+  legacy_list:
     - "ethereum.core.dim_contract_abis"
     - "ethereum.core.dim_contracts"
     - "ethereum.core.dim_contracts_extended"
@@ -72,6 +98,7 @@ ethereum_core_table_long_name:
     - "ethereum.core.fact_token_transfers"
     - "ethereum.core.fact_traces"
     - "ethereum.core.fact_transactions"
+
 
 logging:
   default:
