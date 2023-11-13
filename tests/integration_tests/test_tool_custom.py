@@ -24,12 +24,12 @@ def test_check_table_summary_tool_local(
 
 def test_check_table_metadata_tool_local(snowflake_container_eth_core):
     tool = CheckTableMetadataTool(db=snowflake_container_eth_core)
-    table_names = "ethereum.core.ez_dex_swaps, ethereum.core.ez_nft_mints, ethereum.core.ez_nft_transfers"
+    table_names = "ethereum.core.ez_eth_transfers, ethereum.core.ez_token_transfers, ethereum.core.ez_current_balances"
 
     result = tool._run(table_names=table_names, mode="local")
-    assert "ethereum.core.ez_dex_swaps" in result
-    assert "ethereum.core.ez_nft_mints" in result
-    assert "ethereum.core.ez_nft_transfers" in result
+    assert "ethereum.core.ez_eth_transfers" in result
+    assert "ethereum.core.ez_token_transfers" in result
+    assert "ethereum.core.ez_current_balances" in result
     with pytest.raises(ValueError):
         tool._run("invalid_input")
 

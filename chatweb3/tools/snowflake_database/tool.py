@@ -147,13 +147,44 @@ class ListSnowflakeDatabaseTableNamesTool(ListSQLDatabaseTool):
 
         if Config.PLUGIN_MODE:
             # use the full table list if we are in plugin mode
-            table_long_names_enabled_list = agent_config.get(
+            ethereum_core_table_long_name_list = agent_config.get(
                 "ethereum_core_table_long_name.full_list"
             )
+            ethereum_defi_table_long_name_list = agent_config.get(
+                "ethereum_defi_table_long_name.full_list"
+            )
+            ethereum_nft_table_long_name_list = agent_config.get(
+                "ethereum_nft_table_long_name.full_list"
+            )
+            ethereum_price_table_long_name_list = agent_config.get(
+                "ethereum_price_table_long_name.full_list"
+            )
+            # table_long_names_enabled_list = agent_config.get(
+            #     "ethereum_core_table_long_name.full_list"
+            # )
         else:
-            table_long_names_enabled_list = agent_config.get(
+            # use the enabled table list
+            ethereum_core_table_long_name_list = agent_config.get(
                 "ethereum_core_table_long_name.enabled_list"
             )
+            ethereum_defi_table_long_name_list = agent_config.get(
+                "ethereum_defi_table_long_name.enabled_list"
+            )
+            ethereum_nft_table_long_name_list = agent_config.get(
+                "ethereum_nft_table_long_name.enabled_list"
+            )
+            ethereum_price_table_long_name_list = agent_config.get(
+                "ethereum_price_table_long_name.enabled_list"
+            )
+            # table_long_names_enabled_list = agent_config.get(
+            #     "ethereum_core_table_long_name.enabled_list"
+            # )
+
+        logger.debug(f"{ethereum_core_table_long_name_list=}, {ethereum_defi_table_long_name_list=}, {ethereum_nft_table_long_name_list=}, {ethereum_price_table_long_name_list=}")
+
+        table_long_names_enabled_list = ethereum_core_table_long_name_list + ethereum_defi_table_long_name_list + ethereum_nft_table_long_name_list + ethereum_price_table_long_name_list  # noqa E501
+
+        logger.debug(f"{table_long_names_enabled_list=}")       
 
         table_long_names_enabled = ", ".join(table_long_names_enabled_list)
         include_column_names = False
