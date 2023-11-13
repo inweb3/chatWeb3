@@ -175,7 +175,7 @@ class Table:
         self.verbose = verbose
 
     def __repr__(self) -> str:
-        return f"Table(name='{self.name}', long_name='{self.long_name}', database_name='{self.database_name}', schema_name='{self.schema_name}', column_names={self.column_names})"
+        return f"Table(name='{self.name}', long_name='{self.long_name}', database_name='{self.database_name}', schema_name='{self.schema_name}', column_names={self.column_names}), summary='{self.summary}', comment='{self.comment}')"
 
     def __eq__(self, other):
         if isinstance(other, Table):
@@ -741,11 +741,14 @@ class MetadataParser:
                 "Both table_summary_json and file_path_json are provided, use file_path_json only."
             )
 
+        print(f"{file_path_json=}")
         if file_path_json:
             try:
                 with open(file_path_json, "r") as f:
                     data = json.load(f)
+                    print(f"{data=}")
                     table_summary = data.get("table_summary", None)
+                    print(f"{table_summary=}")
             except FileNotFoundError:
                 print(f"File not found: {file_path_json}")
         elif table_summary_json:

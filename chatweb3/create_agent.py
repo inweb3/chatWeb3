@@ -53,11 +53,13 @@ log_callback_handler = LoggerCallbackHandler()
 
 PROJ_ROOT_DIR = agent_config.get("proj_root_dir")
 LOCAL_INDEX_FILE_PATH = os.path.join(
-    PROJ_ROOT_DIR, agent_config.get("metadata.context_ethereum_core_file")
+    PROJ_ROOT_DIR, agent_config.get("metadata.context_ethereum_file")
 )
+#    PROJ_ROOT_DIR, agent_config.get("metadata.context_ethereum_core_file")
 INDEX_ANNOTATION_FILE_PATH = os.path.join(
-    PROJ_ROOT_DIR, agent_config.get("metadata.annotation_ethereum_core_file")
+    PROJ_ROOT_DIR, agent_config.get("metadata.annotation_ethereum_file")
 )
+#    PROJ_ROOT_DIR, agent_config.get("metadata.annotation_ethereum_core_file")
 QUERY_DATABASE_TOOL_TOP_K = agent_config.get("tool.query_database_tool_top_k")
 # AGENT_EXECUTOR_RETURN_INTERMEDIDATE_STEPS = agent_config.get(
 #    "agent_chain.agent_executor_return_intermediate_steps"
