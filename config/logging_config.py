@@ -2,6 +2,14 @@
 logging_config.py
 This file contains the code for configuring the logger.
 """
+
+"""
+NOTE: If we want to use the environment variable to set the logging level,
+we must make sure the environment variable is set (e.g., load_dotenv()) 
+BEFORE importing this module and calling `get_logger`
+otherwise, we should provide the log_level as an argument to `get_logger`
+"""
+
 import inspect
 import logging
 import os
