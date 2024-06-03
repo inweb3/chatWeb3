@@ -79,6 +79,10 @@ class CustomLoggerAdapter(logging.LoggerAdapter):
 
         return msg, kwargs
 
+    def get_current_log_level(self):
+        level = self.logger.getEffectiveLevel()
+        return logging.getLevelName(level)
+
 
 # Helper function to configure logger handlers
 def _configure_handlers(
