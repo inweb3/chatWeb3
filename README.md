@@ -23,6 +23,7 @@ You will need to provide your OpenAI API key to use this application. An OpenAI 
 ```
 git clone https://github.com/inWeb3ai/chatWeb3.git
 cd chatWeb3
+poetry use python3.11  # make sure python3.11 is installed
 poetry shell
 poetry install
 ```
