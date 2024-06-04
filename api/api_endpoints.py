@@ -70,7 +70,7 @@ async def general_exception_handler(request: Request, exc: Exception):
 
 
 # Endpoint: Get List of Available Tables
-@app.get("/get_list_of_available_tables")
+@app.get("/get_list_of_available_tables", operation_id="get_list_of_available_tables")
 async def get_list_of_available_tables(table_list: str = ""):
     try:
         logger.debug(f"tool_input={table_list} Fetching list of available tables...")
@@ -86,7 +86,7 @@ async def get_list_of_available_tables(table_list: str = ""):
 
 
 # Endpoint: Get Detailed Metadata for Tables
-@app.get("/get_detailed_metadata_for_tables")
+@app.get("/get_detailed_metadata_for_tables", operation_id="get_detailed_metadata_for_tables")
 async def get_detailed_metadata_for_tables(table_names: str):
     try:
         tool = CheckTableMetadataTool(db=db)
@@ -106,7 +106,7 @@ class SnowflakeQuery(BaseModel):
 
 
 # Endpoint: Query Snowflake SQL Database
-@app.post("/query_snowflake_sql_database")
+@app.post("/query_snowflake_sql_database", operation_id="query_snowflake_sql_database")
 async def query_snowflake_sql_database(query: SnowflakeQuery):
     try:
         tool = QueryDatabaseTool(db=db)
