@@ -746,9 +746,9 @@ class MetadataParser:
             try:
                 with open(file_path_json, "r") as f:
                     data = json.load(f)
-                    print(f"{data=}")
+                    # print(f"{data=}")
                     table_summary = data.get("table_summary", None)
-                    print(f"{table_summary=}")
+                    # print(f"{table_summary=}")
             except FileNotFoundError:
                 print(f"File not found: {file_path_json}")
         elif table_summary_json:
