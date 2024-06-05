@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "chatweb3"
-version = "0.1.1"
+version = "0.1.3"
 description = "ChatWeb3 - ChatGPT for blockchain and crypto data analysis"
 authors = ["inWeb3"]
 license = "MIT"
@@ -8,7 +8,7 @@ readme = "README.md"
 repository = "https://github.com/inWeb3ai/chatWeb3"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = ">=3.11,<3.12"
 fastapi = ">=0.103.1"
 requests = ">=2.29.0"
 uvicorn = ">=0.23.2"
