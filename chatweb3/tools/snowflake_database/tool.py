@@ -588,7 +588,7 @@ class SnowflakeQueryCheckerTool(QuerySQLCheckerTool):
     """
 
     @root_validator(pre=True)
-    def initialize_llm_chain(cls, values: Dict[str, Any]) -> Dict[str, Any]:
+    def setup_llm_chain(cls, values: Dict[str, Any]) -> Dict[str, Any]:
         if "llm_chain" not in values:
             input_variables = ["query", "dialect"]
             messages = [
