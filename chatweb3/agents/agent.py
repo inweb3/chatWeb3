@@ -20,7 +20,7 @@ from langchain.schema import AgentAction, AgentFinish, OutputParserException
 from langchain.tools.base import BaseTool
 from langchain.utilities.asyncio import asyncio_timeout
 from langchain.utils.input import get_color_mapping
-from openai.error import InvalidRequestError
+from openai import BadRequestError
 
 # from chatweb3.agents.chat.output_parser import ChatWeb3ChatOutputParser
 # from chatweb3.agents.conversational_chat.output_parser import (
@@ -90,7 +90,7 @@ class ChatWeb3AgentExecutor(AgentExecutor):
                     intermediate_steps,
                     run_manager=run_manager,
                 )
-            except InvalidRequestError as e:
+            except BadRequestError as e:
                 if "maximum context length" in str(e):
                     output_str = "Unfortunately, this question requires many thought steps that exceeded the context window length supported by the current AI model. Please try a different question, or a model that supports a larger context window needs to be used."
                 else:
