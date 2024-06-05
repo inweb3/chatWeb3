@@ -615,9 +615,19 @@ class SnowflakeQueryCheckerTool(QuerySQLCheckerTool):
                 ),
             )
 
-        if values["llm_chain"].prompt.input_variables != ["query", "dialect"]:
+        # if values["llm_chain"].prompt.input_variables != ["query", "dialect"]:
+        #     print(f"{values['llm_chain'].prompt.input_variables=}")
+        #     raise ValueError(
+        #         "LLM chain for QuerySQLCheckerTool must have input variables ['query', 'dialect']"
+        #     )
+
+        expected_variables = {"query", "dialect"}
+
+        if set(values["llm_chain"].prompt.input_variables) != expected_variables:
+            # print(f"{values['llm_chain'].prompt.input_variables=}")
             raise ValueError(
                 "LLM chain for QuerySQLCheckerTool must have input variables ['query', 'dialect']"
             )
+
 
         return values
