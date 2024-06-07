@@ -32,8 +32,10 @@ flipside:
 #  agent_executor_return_intermedidate_steps: False
 
 metadata:
-  context_ethereum_file: data/metadata/context_ethereum_core_defi_nft_price.json
-  annotation_ethereum_file: data/metadata/annotation_ethereum_core_defi_nft_price.json
+  context_ethereum_file: data/metadata/context_ethereum_is_core_defi_nft_price_v3.json
+  annotation_ethereum_file: data/metadata/annotation_ethereum_core_defi_nft_price_v3.json
+  # context_ethereum_file: data/metadata/context_ethereum_core_defi_nft_price.json
+  # annotation_ethereum_file: data/metadata/annotation_ethereum_core_defi_nft_price.json
   # context_ethereum_file: data/metadata/context_ETHEREUM_is_CORE_DEFI.json
   # annotation_ethereum_file: data/metadata/annotation_ethereum_core_defi.json
   # context_ethereum_core_file: data/metadata/context_ethereum_core_v2.json
