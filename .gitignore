@@ -167,3 +167,4 @@ logs/
 
 # Local development
 aDev/
+.aider*
