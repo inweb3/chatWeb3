@@ -53,60 +53,66 @@ ethereum_core_table_long_name:
     - "ethereum.core.ez_token_transfers"
     - "ethereum.core.dim_labels"
   full_list:
-    - "ethereum.core.dim_contract_abis"
-    - "ethereum.core.dim_contracts"
-    - "ethereum.core.dim_dates"
-    - "ethereum.core.dim_event_signatures"
-    - "ethereum.core.dim_function_signatures"
-    - "ethereum.core.dim_labels"
-    - "ethereum.core.ez_balance_deltas"
-    - "ethereum.core.ez_current_balances"
-    - "ethereum.core.ez_decoded_event_logs"
-    - "ethereum.core.ez_eth_transfers"
-    - "ethereum.core.ez_token_transfers"
-    - "ethereum.core.fact_blocks"
-    - "ethereum.core.fact_contract_reads"
-    - "ethereum.core.fact_decoded_event_logs"
-    - "ethereum.core.fact_eth_balances"
-    - "ethereum.core.fact_token_balances"
-    - "ethereum.core.fact_token_transfers"
-    - "ethereum.core.fact_traces"
-    - "ethereum.core.fact_transactions"
+    - ethereum.core.dim_contracts
+    - ethereum.core.ez_token_transfers
+    - ethereum.core.fact_transactions
+    - ethereum.core.dim_event_signatures
+    - ethereum.core.dim_labels
+    - ethereum.core.fact_contract_reads
+    - ethereum.core.fact_token_balances
+    - ethereum.core.dim_contract_abis
+    - ethereum.core.ez_decoded_event_logs
+    - ethereum.core.fact_blocks
+    - ethereum.core.fact_event_logs
+    - ethereum.core.dim_dates
+    - ethereum.core.ez_balance_deltas
+    - ethereum.core.ez_current_balances
+    - ethereum.core.ez_snapshot
+    - ethereum.core.fact_decoded_event_logs
+    - ethereum.core.fact_traces
+    - ethereum.core.dim_function_signatures
+    - ethereum.core.ez_decoded_traces
+    - ethereum.core.ez_native_transfers
+    - ethereum.core.fact_decoded_traces
+    - ethereum.core.fact_eth_balances
+    - ethereum.core.fact_token_transfers
 
 ethereum_defi_table_long_name:
   enabled_list:
     - "ethereum.defi.ez_dex_swaps"
   full_list:
-    - "ethereum.defi.dim_dex_liquidity_pools"
-    - "ethereum.defi.ez_bridge_activity"
-    - "ethereum.defi.ez_dex_swaps"
-    - "ethereum.defi.ez_liquid_staking_deposits"
-    - "ethereum.defi.ez_liquid_staking_withdrawals"
-    - "ethereum.defi.ez_lending_borrows"
-    - "ethereum.defi.ez_lending_deposits"
-    - "ethereum.defi.ez_lending_flashloans"
-    - "ethereum.defi.ez_lending_liquidations"
-    - "ethereum.defi.ez_lending_repayments"
-    - "ethereum.defi.ez_lending_withdraws"
+    - ethereum.defi.ez_lending_withdraws
+    - ethereum.defi.ez_lending_deposits
+    - ethereum.defi.ez_lending_liquidations
+    - ethereum.defi.ez_liquid_staking_deposits
+    - ethereum.defi.ez_dex_swaps
+    - ethereum.defi.ez_lending_borrows
+    - ethereum.defi.ez_lending_flashloans
+    - ethereum.defi.ez_lending_repayments
+    - ethereum.defi.ez_liquid_staking_withdrawals
+    - ethereum.defi.ez_bridge_activity
+    - ethereum.defi.dim_dex_liquidity_pools
 
 ethereum_nft_table_long_name:
   enabled_list:
     - "ethereum.nft.ez_nft_sales"
   full_list:
-    - "ethereum.nft.dim_nft_collection_metadata"
-    - "ethereum.nft.dim_nft_metadata"
-    - "ethereum.nft.ez_nft_mints"
-    - "ethereum.nft.ez_nft_sales"
-    - "ethereum.nft.ez_nft_transfers"
+    - ethereum.nft.ez_nft_mints
+    - ethereum.nft.ez_lending_liquidations
+    - ethereum.nft.ez_lending_repayments
+    - ethereum.nft.ez_nft_sales
+    - ethereum.nft.ez_lending_loans
+    - ethereum.nft.ez_nft_transfers
+    - ethereum.nft.dim_nft_collection_metadata
 
 ethereum_price_table_long_name:
   enabled_list:
-    - "ethereum.price.ez_hourly_token_prices"
+    - "ethereum.price.ez_prices_hourly"
   full_list:
-    - "ethereum.price.dim_asset_metadata"
-    - "ethereum.price.ez_asset_metadata"
-    - "ethereum.price.ez_hourly_token_prices"
-    - "ethereum.price.fact_hourly_token_prices"
+    - ethereum.price.dim_asset_metadata
+    - ethereum.price.fact_prices_ohlc_hourly
+    - ethereum.price.ez_asset_metadata
+    - ethereum.price.ez_prices_hourly
 
 logging:
   default:
