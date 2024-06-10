@@ -2,7 +2,7 @@
 # Path: api/api_endpoints.py
 from fastapi import FastAPI, Request, HTTPException, Security, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse
 from fastapi.security.api_key import APIKeyHeader, APIKey
 from pydantic import BaseModel, Field
 from config.logging_config import get_logger
@@ -20,12 +20,10 @@ from chatweb3.tools.snowflake_database.tool_custom import (
 )
 from chatweb3.create_agent import get_snowflake_container
 
-
 logger = get_logger(__name__)
 
 Config.PLUGIN_MODE = True
 logger.debug(f"Set Config.PLUGIN_MODE={Config.PLUGIN_MODE}")
-
 
 db = get_snowflake_container()
 
@@ -36,10 +34,6 @@ app = FastAPI(
     description=ai_plugin["description_for_human"],
     version="0.1.0",
 )
-
-# origins = [
-#     "https://chat.openai.com",
-# ]
 
 app.add_middleware(
     CORSMiddleware,
@@ -56,16 +50,15 @@ load_dotenv()
 
 # API key authentication
 API_KEY = os.getenv("INWEB3_API_KEY")
-API_KEY_NAME = "access_token"
+API_KEY_NAME = "Authorization"
 api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
 
-
 async def get_api_key(api_key_header: str = Security(api_key_header)):
-    if api_key_header == API_KEY:
-        return api_key_header
-    else:
-        raise HTTPException(status_code=403, detail="Could not validate credentials")
-
+    if api_key_header and api_key_header.startswith("Bearer "):
+        token = api_key_header[len("Bearer "):]
+        if token == API_KEY:
+            return token
+    raise HTTPException(status_code=403, detail="Could not validate credentials")
 
 # Exception Handlers
 @app.exception_handler(HTTPException)
@@ -75,7 +68,6 @@ async def http_exception_handler(request: Request, exc: HTTPException):
         content={"error": exc.detail},
     )
 
-
 @app.exception_handler(Exception)
 async def general_exception_handler(request: Request, exc: Exception):
     logger.error(f"An error occurred: {exc}")
@@ -84,10 +76,8 @@ async def general_exception_handler(request: Request, exc: Exception):
         content={"error": "Internal server error"},
     )
 
-
 # Endpoint: Get List of Available Tables
 @app.get("/get_list_of_available_tables", operation_id="get_list_of_available_tables")
-#async def get_list_of_available_tables(table_list: str = ""):
 async def get_list_of_available_tables(table_list: str = "", api_key: APIKey = Depends(get_api_key)):
     try:
         logger.debug(f"tool_input={table_list} Fetching list of available tables...")
@@ -101,11 +91,9 @@ async def get_list_of_available_tables(table_list: str = "", api_key: APIKey = D
         logger.error(f"Error fetching list of available tables: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 # Endpoint: Get Detailed Metadata for Tables
 @app.get("/get_detailed_metadata_for_tables", operation_id="get_detailed_metadata_for_tables")
 async def get_detailed_metadata_for_tables(table_names: str, api_key: APIKey = Depends(get_api_key)):
-#async def get_detailed_metadata_for_tables(table_names: str):
     try:
         tool = CheckTableMetadataTool(db=db)
         result = tool.run(table_names)
@@ -115,17 +103,14 @@ async def get_detailed_metadata_for_tables(table_names: str, api_key: APIKey = D
         logger.debug(f"Error fetching metadata for table(s) {table_names}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 class SnowflakeQuery(BaseModel):
     query: str = Field(
         ...,
         description="A Snowflake SQL query",
     )
 
-
 # Endpoint: Query Snowflake SQL Database
 @app.post("/query_snowflake_sql_database", operation_id="query_snowflake_sql_database")
-# async def query_snowflake_sql_database(query: SnowflakeQuery):
 async def query_snowflake_sql_database(query: SnowflakeQuery, api_key: APIKey = Depends(get_api_key)):
     try:
         tool = QueryDatabaseTool(db=db)
@@ -136,11 +121,8 @@ async def query_snowflake_sql_database(query: SnowflakeQuery, api_key: APIKey = 
         logger.error(f"Error executing query {query.query}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
 def start():
     import uvicorn
-
     uvicorn.run("api.api_endpoints:app", host="localhost", port=8000, reload=True)
-
 
 # uvicorn api.api_endpoints:app --reload
