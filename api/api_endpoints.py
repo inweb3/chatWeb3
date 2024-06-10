@@ -1,15 +1,16 @@
 # Description: This file contains the API endpoints for ChatWeb3
 # Path: api/api_endpoints.py
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request, HTTPException, Security, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.security.api_key import APIKeyHeader, APIKey
 from pydantic import BaseModel, Field
 from config.logging_config import get_logger
 from dotenv import load_dotenv
+import os
 
 from api.routers.well_known import get_ai_plugin, get_host, well_known
 from config.config import Config
-
 
 # Importing the required tools from tool_custom.py
 from chatweb3.tools.snowflake_database.tool_custom import (
@@ -50,6 +51,21 @@ app.add_middleware(
 
 app.include_router(well_known)
 
+# Load environment variables
+load_dotenv()
+
+# API key authentication
+API_KEY = os.getenv("INWEB3_API_KEY")
+API_KEY_NAME = "access_token"
+api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+
+
+async def get_api_key(api_key_header: str = Security(api_key_header)):
+    if api_key_header == API_KEY:
+        return api_key_header
+    else:
+        raise HTTPException(status_code=403, detail="Could not validate credentials")
+
 
 # Exception Handlers
 @app.exception_handler(HTTPException)
@@ -71,7 +87,8 @@ async def general_exception_handler(request: Request, exc: Exception):
 
 # Endpoint: Get List of Available Tables
 @app.get("/get_list_of_available_tables", operation_id="get_list_of_available_tables")
-async def get_list_of_available_tables(table_list: str = ""):
+#async def get_list_of_available_tables(table_list: str = ""):
+async def get_list_of_available_tables(table_list: str = "", api_key: APIKey = Depends(get_api_key)):
     try:
         logger.debug(f"tool_input={table_list} Fetching list of available tables...")
         tool = CheckTableSummaryTool(db=db)
@@ -87,7 +104,8 @@ async def get_list_of_available_tables(table_list: str = ""):
 
 # Endpoint: Get Detailed Metadata for Tables
 @app.get("/get_detailed_metadata_for_tables", operation_id="get_detailed_metadata_for_tables")
-async def get_detailed_metadata_for_tables(table_names: str):
+async def get_detailed_metadata_for_tables(table_names: str, api_key: APIKey = Depends(get_api_key)):
+#async def get_detailed_metadata_for_tables(table_names: str):
     try:
         tool = CheckTableMetadataTool(db=db)
         result = tool.run(table_names)
@@ -107,7 +125,8 @@ class SnowflakeQuery(BaseModel):
 
 # Endpoint: Query Snowflake SQL Database
 @app.post("/query_snowflake_sql_database", operation_id="query_snowflake_sql_database")
-async def query_snowflake_sql_database(query: SnowflakeQuery):
+# async def query_snowflake_sql_database(query: SnowflakeQuery):
+async def query_snowflake_sql_database(query: SnowflakeQuery, api_key: APIKey = Depends(get_api_key)):
     try:
         tool = QueryDatabaseTool(db=db)
         result = tool.run(tool_input=query.query)
